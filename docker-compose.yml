@@ -1,0 +1,12 @@
+services:
+  sonysauto-app:
+    build: .
+    volumes:
+      - uploads:/app/public/uploads
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+
+volumes:
+  uploads:
