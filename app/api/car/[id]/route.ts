@@ -78,6 +78,9 @@ export async function GET(
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
     }
 
+    car.counter += 1;
+    await car.save();
+
     car.features = car.features.sort(
       (a: any, b: any) =>
         featureOrderIds.indexOf(a._id) - featureOrderIds.indexOf(b._id),

@@ -15,6 +15,7 @@ export type CarResponse = {
   label?: CarLabel;
   createdAt: string;
   updatedAt: string;
+  counter: number;
   __v: number;
 };
 

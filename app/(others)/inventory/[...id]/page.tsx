@@ -14,7 +14,7 @@ import {
 import { ArrowLeft, Clock, MessageCircle, Printer } from "react-feather";
 import CarouselContainer from "@/components/CarouselContainer";
 import { Button } from "@/components/ui/button";
-import { Car, Mail, Pencil, Trash2 } from "lucide-react";
+import { Car, Eye, Mail, Pencil, Trash2 } from "lucide-react";
 import Lightbox from "@/components/Lightbox";
 import CarInsights from "./_CarInsights";
 import CarSummary from "./_CarSummary";
@@ -130,19 +130,28 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
             {/* car name */}
             <h2 className="text-2xl font-bold">{car?.title}</h2>
             {/* added in */}
-            <div className="flex items-center gap-2">
-              <Clock size={"1em"} />
-              <span>
-                Added:{" "}
-                {new Date(car?.createdAt || Date.now()).toLocaleDateString(
-                  "en-US",
-                  {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  },
-                )}
-              </span>
+            <div className="mt-2 flex gap-4">
+              <div className="flex items-center gap-2">
+                <Clock size={"1em"} />
+                <span>
+                  Added:{" "}
+                  {new Date(car?.createdAt || Date.now()).toLocaleDateString(
+                    "en-US",
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    },
+                  )}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Eye size={"1em"} />
+                <span>
+                  Views: {car?.counter || 0}{" "}
+                  {/* Replace with the actual views data */}
+                </span>
+              </div>
             </div>
           </div>
           {/* image slider */}

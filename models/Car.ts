@@ -42,12 +42,14 @@ type ICar = Document & {
   pages: string[];
   createdAt: Date;
   updatedAt: Date;
+  counter: number;
 };
 
 const CarSchema = new Schema<ICar>(
   {
     title: { type: String, required: true },
     price: { type: String, default: null },
+    counter: { type: Number, default: 0 },
     features: [
       {
         type: Schema.Types.ObjectId,
