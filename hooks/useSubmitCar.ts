@@ -156,11 +156,15 @@ const useSubmitCarData = () => {
             return {
               detail: field._id,
               option: optionResult?._id ?? "",
+              showInListPage: field.showInListPage ?? false,
+              showInDetailsPage: field.showInDetailsPage ?? false,
             };
           }
           return {
             detail: field._id,
             option: field.selectedValues?.[0]?._id ?? "",
+            showInListPage: field.showInListPage ?? false,
+            showInDetailsPage: field.showInDetailsPage ?? false,
           };
         }),
       );

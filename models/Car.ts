@@ -24,6 +24,8 @@ type SellerNote = {
 type Detail = {
   detail: Types.ObjectId;
   option: Types.ObjectId | null;
+  showInDetailsPage: boolean;
+  showInListPage: boolean;
 };
 
 type ICar = Document & {
@@ -63,6 +65,8 @@ const CarSchema = new Schema<ICar>(
           ref: "CarDetailOption",
           default: null,
         },
+        showInDetailsPage: { type: Boolean, default: false },
+        showInListPage: { type: Boolean, default: false },
       },
     ],
     videos: { type: [String], default: [] },

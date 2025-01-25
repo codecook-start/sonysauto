@@ -167,6 +167,8 @@ export type CarFormField = {
   value?: string;
   values: CarDetailOption[];
   selectedValues?: CarDetailOption[];
+  showInListPage: boolean;
+  showInDetailsPage: boolean;
 };
 
 export type DetailResponse = {

@@ -42,10 +42,11 @@ export async function POST(request: NextRequest) {
       }),
     );
 
-    const carDetails: { _id: Types.ObjectId }[] = await CarDetail.find(
-      {},
-      { _id: 1 },
-    );
+    const carDetails: {
+      _id: Types.ObjectId;
+      showInDetailsPage: boolean;
+      showInListPage: boolean;
+    }[] = await CarDetail.find({}, { _id: 1 });
 
     const parsedDetails = JSON.parse(formData.get("details") as string);
     const details = carDetails.map((detail) => {
@@ -60,12 +61,16 @@ export async function POST(request: NextRequest) {
             found && found.option
               ? new Types.ObjectId(found.option as string)
               : null,
+          showInDetailsPage: detail.showInDetailsPage,
+          showInListPage: detail.showInListPage,
         };
       } catch (error) {
         console.error("Error converting ObjectId(option):", error);
         return {
           detail: detail._id,
           option: null,
+          showInDetailsPage: detail.showInDetailsPage,
+          showInListPage: detail.showInListPage,
         };
       }
     });
