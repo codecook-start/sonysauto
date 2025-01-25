@@ -28,6 +28,8 @@ import { rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
 import useAuth from "@/hooks/useAuth";
 import { Button } from "./ui/button";
 import { Save } from "lucide-react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const CarListing = () => {
   const {
@@ -154,6 +156,16 @@ const CarListing = () => {
     });
   };
 
+  useEffect(() => {
+    AOS.init({
+      duration: 600, // Faster animation duration (0.6 seconds)
+      delay: 50, // A slight delay to make the animations smoother
+      once: true, // Trigger animation only once
+      easing: "ease-out", // Easing function for smoother animation
+      offset: 200, // Trigger when the element is 200px away from the viewport
+    });
+  }, []);
+
   return (
     <div className="container-md-mx flex-1">
       <h2 className="mx-auto my-4 text-center text-2xl font-bold">
@@ -247,25 +259,34 @@ const CarListing = () => {
                     items={cars.map((field) => field._id)}
                     strategy={rectSortingStrategy}
                   >
-                    {cars.map((car) => (
-                      <InventoryCard
+                    {cars.map((car, index) => (
+                      <div
                         key={car._id}
-                        car={car}
-                        onSelect={toggleSelection}
-                        isDragging={activeId === car._id}
-                        isSelected={selectedIds.includes(car._id)}
-                      />
+                        data-aos="fade-up" // Use the fade-up animation
+                        data-aos-delay={index * 100} // Stagger animations with delay based on index
+                        className="inventory-card"
+                      >
+                        <InventoryCard
+                          key={car._id}
+                          car={car}
+                          onSelect={toggleSelection}
+                          isDragging={activeId === car._id}
+                          isSelected={selectedIds.includes(car._id)}
+                        />
+                      </div>
                     ))}
                   </SortableContext>
                   <DragOverlay dropAnimation={dropAnimation}>
                     {activeId ? (
                       <div className="flex gap-2">
-                        {selectedIds.map((id) => {
+                        {selectedIds.map((id, index) => {
                           const car = cars.find((c) => c._id === id);
                           return car ? (
                             <div
                               key={id}
-                              className="relative w-48 opacity-80 shadow-lg"
+                              className="inventory-card relative w-48 opacity-80 shadow-lg"
+                              data-aos="fade-up" // Use the fade-up animation
+                              data-aos-delay={index * 100} // Stagger animations with delay based on index
                             >
                               <InventoryCard
                                 car={car}

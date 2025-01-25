@@ -4,12 +4,23 @@ import { useFilter } from "@/hooks/useFilter";
 import { carPaginationAtom } from "@/jotai/carsAtom";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAtom } from "jotai";
-import React from "react";
+import React, { useEffect } from "react";
 import Loader from "@/components/Loader";
+import AOS from "aos";
+import "aos/dist/aos.css"; // Import AOS styles
 
 const TypeFilter = () => {
   const [pagination, setPagination] = useAtom(carPaginationAtom);
   const { refetch } = useCars();
+
+  useEffect(() => {
+    // Initialize AOS
+    AOS.init({
+      duration: 1000, // Animation duration
+      easing: "ease-in-out", // Easing for the animations
+      once: true, // Run animation only once
+    });
+  }, []);
   const {
     types,
     refetch: refetchFilters,
@@ -71,6 +82,7 @@ const TypeFilter = () => {
             key={type.name}
             onClick={() => handleTypeClick(type.name)}
             className="group relative flex-1 flex-shrink-0"
+            data-aos="fade-up" // Add AOS animation
           >
             {isTypeSelected(type.name) && (
               <div className="absolute inset-0 h-full rounded-lg bg-gradient-to-r from-[#008559] via-[#0073e5] to-[#6842ff] opacity-75 blur-sm" />

@@ -13,11 +13,16 @@ import { lastFilterAtom } from "@/jotai/filtersAtom";
 import { capitalize, delay } from "@/lib/utils";
 import { useAtom, useSetAtom } from "jotai";
 // import { Slider } from "@/components/ui/slider";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import SortSelect from "./SortSelect";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const InventoryFilter = () => {
+  useEffect(() => {
+    AOS.init({ duration: 800, easing: "ease-in-out" });
+  }, []);
   const { cars, refetch, isLoading } = useCars();
   const {
     filters,
@@ -109,15 +114,18 @@ const InventoryFilter = () => {
   //   pagination.maxPrice || pagination.priceRange?.max || Infinity;
 
   return (
-    <div className="my-3 flex flex-col gap-4">
-      <h3 className="text-center text-lg font-semibold">
+    <div className="my-3 flex flex-col gap-4" data-aos="fade-up">
+      <h3 className="text-center text-lg font-semibold" data-aos="fade-down">
         Refine Search Results
       </h3>
-      <div className="my-8 mt-0 grid grid-cols-2 items-center gap-4 rounded bg-sky-400/50 p-4 lg:grid-cols-5">
+      <div
+        className="my-8 mt-0 grid grid-cols-2 items-center gap-4 rounded bg-sky-400/50 p-4 lg:grid-cols-5"
+        data-aos="zoom-in"
+      >
         {filters
           ?.filter((filter) => filter.name.toLowerCase() !== "model")
           .map((filter) => (
-            <div key={filter.name} className="filter">
+            <div key={filter.name} className="filter" data-aos="fade-right">
               <MultiSelect
                 options={filter.values.map(({ name, count }) => ({
                   label: name,
@@ -139,7 +147,7 @@ const InventoryFilter = () => {
               />
             </div>
           ))}
-        <div className="features">
+        <div className="features" data-aos="fade-left">
           <MultiSelect
             options={(pagination.features || []).map(({ name, count }) => ({
               label: name,
@@ -154,11 +162,11 @@ const InventoryFilter = () => {
           />
         </div>
         {/* Sorting */}
-        <div className="sorting">
+        <div className="sorting" data-aos="fade-right">
           <SortSelect onValueChange={handleSortChange} />
         </div>
         {/* Per Page */}
-        <div className="items-per-page">
+        <div className="items-per-page" data-aos="fade-left">
           <Select
             value={pagination.limit.toString()}
             onValueChange={handlePerPageChange}
@@ -174,7 +182,7 @@ const InventoryFilter = () => {
           </Select>
         </div>
         {!isLoading && (
-          <div className="reset">
+          <div className="reset" data-aos="flip-up">
             <Button
               onClick={resetAll}
               className="w-full rounded bg-blue-600 text-xs"

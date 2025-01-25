@@ -3,13 +3,24 @@ import { useCars } from "@/hooks/useCars";
 import { useFilter } from "@/hooks/useFilter";
 import { carPaginationAtom } from "@/jotai/carsAtom";
 import { useAtom } from "jotai";
-import React from "react";
+import React, { useEffect } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { delay } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
 import Loader from "@/components/Loader";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const MakeFilter = () => {
+  useEffect(() => {
+    AOS.init({
+      duration: 600, // Animation duration (0.6 seconds)
+      delay: 100, // Initial delay for the first item
+      once: true, // Trigger animation only once
+      easing: "ease-out", // Easing function
+      offset: 200, // Trigger when the element is 200px away from the viewport
+    });
+  }, []);
   const [pagination, setPagination] = useAtom(carPaginationAtom);
   const {
     makes,
@@ -70,12 +81,14 @@ const MakeFilter = () => {
     <div className="relative mx-auto w-min max-w-full">
       <ScrollArea>
         <div className="flex h-full gap-4 px-4 py-2">
-          {makes?.slice(0, 8).map((make) => (
+          {makes?.slice(0, 8).map((make, index) => (
             <button
               key={make.name}
               onClick={() => toggleMakeFilter(make.name)}
               className="group relative flex-shrink-0"
               aria-pressed={isMakeSelected(make.name)}
+              data-aos="fade-up" // Apply AOS fade-up animation
+              data-aos-delay={index * 150} // Staggered delay based on index
             >
               {isMakeSelected(make.name) && (
                 <div
