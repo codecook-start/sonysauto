@@ -4,8 +4,50 @@ import { carDetailMap } from "@/data";
 import { carAtom } from "@/jotai/carAtom";
 import { capitalize } from "@/lib/utils";
 import { useAtomValue } from "jotai";
-import { Zap } from "lucide-react";
 import React from "react";
+import {
+  CalendarDays,
+  Car,
+  CarFront,
+  Circle,
+  Fan,
+  File,
+  Home,
+  Layers,
+  Lock,
+  MoreVertical,
+  Sliders,
+  Sun,
+  Tag,
+  ToggleLeft,
+  Truck,
+  Zap,
+  FileScan,
+} from "lucide-react";
+
+const fieldIcons: Record<string, React.ComponentType<any>> = {
+  year: CalendarDays,
+  make: Fan,
+  model: Car,
+  "Sub-Model": CarFront,
+  condition: Layers,
+  type: ToggleLeft,
+  "Engine Size": Truck,
+  tranny: Car,
+  kilometers: Truck,
+  miles: Truck,
+  color: Circle,
+  interior: Home,
+  doors: Lock,
+  seats: Car,
+  "l x w x h": Sliders,
+  weight: Zap,
+  tags: Tag,
+  "other tags": MoreVertical,
+  "model code": FileScan,
+  "stock id": File,
+  "fuel type": Sun,
+};
 
 const CarSummary = () => {
   const car = useAtomValue(carAtom);
@@ -26,13 +68,13 @@ const CarSummary = () => {
       </h3>
       <ul className="col-span-3 grid grid-rows-5 gap-x-8 md:grid-cols-3">
         {carDetails.map(({ name, values, icon }, index) => {
-          let Icon = icon;
-          if (!Icon) Icon = Zap;
+          const normalizedName = name.toLowerCase();
+          const Icon = icon || fieldIcons[normalizedName] || Zap;
           const isIcon = typeof Icon === "object";
           return (
-            <li key={index} className="flex items-center gap-2 border-b py-4">
+            <li key={index} className="flex items-center gap-2 border-b py-2">
               {isIcon ? (
-                <Icon size={"1em"} color="green" />
+                <Icon size={25} color="#00C72E" />
               ) : (
                 <img
                   className="size-4 rounded-md object-contain object-center"
