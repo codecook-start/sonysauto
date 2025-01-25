@@ -91,19 +91,23 @@ const SortableItem: React.FC<{ field: CarFormField }> = ({ field }) => {
     });
   };
 
-  const options = (field.values || []).map((v) => ({
-    _id: v._id,
-    label: v.name,
-    value: v.name,
-    icon: v.icon,
-  }));
+  const options = (field.values || [])
+    .map((v) => ({
+      _id: v._id,
+      label: v.name,
+      value: v.name,
+      icon: v.icon,
+    }))
+    .sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
 
-  const selectedOptions = (field.selectedValues || []).map((option) => ({
-    _id: option._id,
-    label: option.name,
-    value: option.name,
-    icon: option.icon,
-  }));
+  const selectedOptions = (field.selectedValues || [])
+    .map((option) => ({
+      _id: option._id,
+      label: option.name,
+      value: option.name,
+      icon: option.icon,
+    }))
+    .sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
 
   const handleValueChange = (ops: typeof options) => {
     setCarFormFields((prevFields) =>
@@ -311,8 +315,10 @@ const SortableItem: React.FC<{ field: CarFormField }> = ({ field }) => {
             <Label className="text-xs">Details</Label>
           </div>
         </div>
-        {isDropdown(field) ? (
-          isImageDropdown(field) ? (
+        {!field.type ||
+        field.type === "dropdown" ||
+        field.type === "image-dropdown" ? (
+          field.type === "image-dropdown" ? (
             <MultiSelectWithCustomImageOptionControl
               options={options}
               selectedOptions={selectedOptions}
