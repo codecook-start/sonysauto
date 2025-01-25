@@ -11,14 +11,21 @@ import fs from "fs";
 import { CarDetailOption } from "./Option";
 import { removeApi } from "@/lib/utils";
 
+type FieldType = "text" | "dropdown" | "image-dropdown";
 export type CarDetailDocument = Document & {
   name: string;
   icon?: string | null;
+  type: FieldType;
 };
 
 const carDetailSchema = new Schema<CarDetailDocument>({
   name: { type: String, required: true },
   icon: { type: String, nullable: true },
+  type: {
+    type: String,
+    required: true,
+    enum: ["text", "dropdown", "image-dropdown"],
+  },
 });
 
 carDetailSchema.index({ name: 1 });

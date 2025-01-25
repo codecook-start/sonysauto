@@ -164,6 +164,7 @@ export type CarFormField = {
   _id: string;
   name: string;
   icon: string | null;
+  type: string;
   value?: string;
   values: CarDetailOption[];
   selectedValues?: CarDetailOption[];

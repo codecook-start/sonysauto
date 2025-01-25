@@ -29,6 +29,7 @@ export const useDetails = () => {
   const addDetail = async (detail: Partial<CarFormField>) => {
     const formData = new FormData();
     formData.append("name", detail.name || "");
+    formData.append("type", detail.type || "");
 
     const response = await axios.post("/api/details", formData, {
       headers: {

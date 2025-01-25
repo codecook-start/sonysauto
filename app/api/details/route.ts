@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get("image") as File | null;
     const name = formData.get("name") as string | null;
+    const type = formData.get("type") as string | null;
 
     if (!name) {
       return NextResponse.json(
@@ -52,6 +53,7 @@ export async function POST(request: NextRequest) {
 
     const detail = new CarDetail({
       name,
+      type,
       icon: iconPath,
     });
 
@@ -193,6 +195,7 @@ export async function GET() {
         $project: {
           name: 1,
           icon: 1,
+          type: 1,
           values: {
             $map: {
               input: "$values",
@@ -201,11 +204,30 @@ export async function GET() {
                 _id: "$$option._id",
                 name: "$$option.name",
                 icon: "$$option.icon",
+                type: "$$option.type",
               },
             },
           },
         },
       },
+      // Sort main CarDetail records alphabetically
+      {
+        $sort: {
+          name: 1, // Sort alphabetically by name
+        },
+      },
+      // // Sort options alphabetically within each CarDetail
+      // {
+      //   $addFields: {
+      //     values: {
+      //       $sortArray: {
+      //         input: "$values",
+      //         sortBy: { name: 1 },
+      //       },
+      //     },
+      //   },
+      // },
+
       {
         $addFields: {
           order: {

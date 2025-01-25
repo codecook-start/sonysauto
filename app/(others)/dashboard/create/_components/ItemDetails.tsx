@@ -1,29 +1,29 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState } from "react";
-import { useSetAtom } from "jotai";
-import { CarFormFieldsAtom } from "@/jotai/dashboardAtom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CarFormFieldsAtom } from "@/jotai/dashboardAtom";
+import { useSetAtom } from "jotai";
+import React, { useState } from "react";
 
-import { DndContext, DragEndEvent, closestCenter } from "@dnd-kit/core";
+import { Button } from "@/components/ui/button";
+import { MultiSelectWithCustomImageOptionControl } from "@/components/ui/multi-select-with-custom-image-option-control";
+import { MultiSelectWithCustomOptionControl } from "@/components/ui/multi-select-with-custom-option-control";
+import { useDetails } from "@/hooks/useDetails";
+import useOptions from "@/hooks/useOptions";
+import { capitalize, cn } from "@/lib/utils";
+import { CarFormField } from "@/types/car";
+import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
+  rectSortingStrategy,
   SortableContext,
   useSortable,
-  rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, PencilIcon, Plus, Save, Trash2 } from "lucide-react";
-import { CarFormField } from "@/types/car";
-import { capitalize, cn, isDropdown, isImageDropdown } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { useDetails } from "@/hooks/useDetails";
 import { Loader } from "react-feather";
-import { MultiSelectWithCustomImageOptionControl } from "@/components/ui/multi-select-with-custom-image-option-control";
-import useOptions from "@/hooks/useOptions";
-import { MultiSelectWithCustomOptionControl } from "@/components/ui/multi-select-with-custom-option-control";
 
 const SortableItem: React.FC<{ field: CarFormField }> = ({ field }) => {
   const [editMode, setEditMode] = useState(false);
@@ -130,7 +130,7 @@ const SortableItem: React.FC<{ field: CarFormField }> = ({ field }) => {
             return {
               ...f,
               value: e.target.value
-                ? (parseFloat(e.target.value) * 0.621371).toFixed(2).toString()
+                ? Math.round(parseFloat(e.target.value) * 0.621371).toString() // No decimal places
                 : "",
             };
           }
@@ -147,7 +147,7 @@ const SortableItem: React.FC<{ field: CarFormField }> = ({ field }) => {
             return {
               ...f,
               value: e.target.value
-                ? (parseFloat(e.target.value) / 0.621371).toFixed(2).toString()
+                ? Math.round(parseFloat(e.target.value) / 0.621371).toString() // No decimal places
                 : "",
             };
           }
@@ -311,8 +311,8 @@ const SortableItem: React.FC<{ field: CarFormField }> = ({ field }) => {
             <Label className="text-xs">Details</Label>
           </div>
         </div>
-        {isDropdown(field) ? (
-          isImageDropdown(field) ? (
+        {(field.type || "dropdown") === "dropdown" ? (
+          field.type === "image-dropdown" ? (
             <MultiSelectWithCustomImageOptionControl
               options={options}
               selectedOptions={selectedOptions}
@@ -374,6 +374,11 @@ const ItemDetails: React.FC = () => {
     saveOrder: { mutate: saveOrder, isLoading: isPatching },
   } = useDetails();
 
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [fieldType, setFieldType] = useState<
+    "text" | "dropdown" | "image-dropdown"
+  >("dropdown");
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -386,11 +391,16 @@ const ItemDetails: React.FC = () => {
     }
   };
 
-  const handleAddField = () => {
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+  const handleConfirmAddField = () => {
     addField({
       name: `new field ${carFormFields.length + 1}`,
       icon: "",
+      type: fieldType,
     });
+    setModalOpen(false);
   };
 
   return (
@@ -427,7 +437,7 @@ const ItemDetails: React.FC = () => {
             ))}
             <Button
               title="Add Item Detail"
-              onClick={handleAddField}
+              onClick={handleOpenModal}
               disabled={isAddingField}
               className={`mt-5 flex flex-1 items-center justify-center rounded-md border bg-neutral-100 py-3 text-black transition-colors duration-150 hover:bg-neutral-200 ${
                 isAddingField ? "animate-pulse cursor-not-allowed" : ""
@@ -445,6 +455,60 @@ const ItemDetails: React.FC = () => {
           </div>
         </SortableContext>
       </DndContext>
+      {/* Modal for Selecting Field Type */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-100 rounded-lg bg-white p-6 shadow-md">
+            <h2 className="mb-4 text-lg font-semibold">Choose Field Type</h2>
+            <div className="mb-4 flex gap-4">
+              <Button
+                onClick={() => setFieldType("text")}
+                className={`rounded-md px-4 py-2 ${
+                  fieldType === "text"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+              >
+                Text Input
+              </Button>
+              <Button
+                onClick={() => setFieldType("image-dropdown")}
+                className={`rounded-md px-4 py-2 ${
+                  fieldType === "image-dropdown"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+              >
+                Image Dropdown
+              </Button>
+              <Button
+                onClick={() => setFieldType("dropdown")}
+                className={`rounded-md px-4 py-2 ${
+                  fieldType === "dropdown"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+              >
+                Dropdown
+              </Button>
+            </div>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button
+                onClick={handleConfirmAddField}
+                className="rounded-md bg-blue-500 px-4 py-2 text-white"
+              >
+                Add Field
+              </Button>
+              <Button
+                onClick={() => setModalOpen(false)}
+                className="rounded-md bg-gray-400 px-4 py-2 text-white"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
