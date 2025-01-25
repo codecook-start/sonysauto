@@ -225,6 +225,8 @@ export async function PUT(
     car.title = formData.get("title")?.toString() || car.title;
     car.price = formData.get("price")?.toString() || car.price;
     car.extra = formData.get("extra")?.toString() || car.extra;
+    car.isCarousel = formData.get("isCarousel") === "true";
+    car.link = formData.get("link")?.toString() || car.link;
     car.details = details;
     car.features = features;
     car.sellerNotes = sellerNotes;

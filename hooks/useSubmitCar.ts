@@ -77,6 +77,7 @@ const useSubmitCarData = () => {
       extra: "",
       details: [],
       link: "",
+      isCarousel: false,
     }));
     setCarFormFields((prevFields) =>
       prevFields.map((field) => ({
@@ -136,6 +137,7 @@ const useSubmitCarData = () => {
     formData.append("price", car.price || "");
     formData.append("extra", car.extra || "");
     formData.append("link", car.link || "");
+    formData.append("isCarousel", car.isCarousel ? "true" : "false");
 
     if (car.images) {
       car.images.forEach((image) => {
@@ -231,6 +233,7 @@ const useSubmitCarData = () => {
     car.title,
     car.price,
     car.extra,
+    car.isCarousel,
     car.images,
     car.videos,
     car.label,

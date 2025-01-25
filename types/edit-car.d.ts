@@ -17,6 +17,7 @@ export type CarResponse = {
   updatedAt: string;
   counter: number;
   link: string;
+  isCarousel: boolean;
   __v: number;
 };
 

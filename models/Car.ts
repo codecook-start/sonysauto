@@ -44,6 +44,7 @@ type ICar = Document & {
   updatedAt: Date;
   counter: number;
   link: string;
+  isCarousel: boolean;
 };
 
 const CarSchema = new Schema<ICar>(
@@ -52,6 +53,7 @@ const CarSchema = new Schema<ICar>(
     price: { type: String, default: null },
     counter: { type: Number, default: 0 },
     link: { type: String, default: null, required: false },
+    isCarousel: { type: Boolean, default: true, required: false },
     features: [
       {
         type: Schema.Types.ObjectId,

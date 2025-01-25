@@ -60,6 +60,7 @@ export type Car = {
   domain?: string[];
   pages?: string[];
   label?: CarLabel;
+  isCarousel?: boolean;
 };
 
 export type UploadedImage = {

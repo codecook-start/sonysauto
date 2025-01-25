@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
       price: formData.get("price")?.toString() || "",
       extra: formData.get("extra")?.toString() || "",
       link: formData.get("link")?.toString() || "",
+      isCarousel: formData.get("isCarousel") === "true",
       details,
       features,
       videos: formData.get("videos")

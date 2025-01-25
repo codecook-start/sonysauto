@@ -105,6 +105,23 @@ const Dashboard = ({ params: { id } }: { params: { id: string } }) => {
           />
         </div>
 
+        {/* Switch for isCarousel */}
+        <div className="container-md mt-8 flex items-center space-x-4">
+          <Label htmlFor="carousel-switch">Enable Carousel</Label>
+          <label className="relative inline-flex cursor-pointer items-center">
+            <input
+              id="carousel-switch"
+              type="checkbox"
+              checked={carData?.isCarousel || false}
+              onChange={(e) =>
+                setCar({ ...carData, isCarousel: e.target.checked })
+              }
+              className="peer sr-only"
+            />
+            <div className="peer h-6 w-11 rounded-full bg-gray-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:bg-blue-600 peer-checked:after:translate-x-full"></div>
+          </label>
+        </div>
+
         {/* Item Details */}
         <ItemDetails />
         <ItemFeatures />

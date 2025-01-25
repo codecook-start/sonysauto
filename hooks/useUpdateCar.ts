@@ -85,6 +85,8 @@ const useUpdateCar = () => {
     formData.append("title", car.title || "");
     formData.append("price", car.price || "");
     formData.append("extra", car.extra || "");
+    formData.append("link", car.link || "");
+    formData.append("isCarousel", car.isCarousel ? "true" : "false");
 
     images.forEach((image) => {
       if (image.type === "old") {

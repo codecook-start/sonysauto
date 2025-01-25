@@ -16,6 +16,7 @@ const initialCar: Car = {
   sellerNotes: [],
   extra: "",
   details: [],
+  isCarousel: false,
 };
 
 export const CarLocalAtom = atom<Car>(initialCar);

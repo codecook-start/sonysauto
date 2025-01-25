@@ -275,9 +275,11 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
         <CarSummary />
       </div>
       {/* car highlights */}
-      <div data-aos="fade-up">
-        <CarHighlights />
-      </div>
+      {(car?.isCarousel === true || car?.isCarousel === undefined) && (
+        <div data-aos="fade-up">
+          <CarHighlights />
+        </div>
+      )}
       {/* car features */}
       <div data-aos="fade-up">
         <CarFeatures />
