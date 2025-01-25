@@ -8,6 +8,7 @@ import { atom } from "jotai";
 
 const initialCar: Car = {
   title: "",
+  link: "",
   features: [],
   price: "",
   videos: [],

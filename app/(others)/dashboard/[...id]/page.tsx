@@ -94,6 +94,16 @@ const Dashboard = ({ params: { id } }: { params: { id: string } }) => {
             />
           </div>
         </div>
+        <div className="container-md flex-1">
+          <Label>Link</Label>
+          <Input
+            value={carData?.link}
+            onChange={(e) => setCar({ ...carData, link: e.target.value })}
+            type="text"
+            placeholder="Link"
+            className="my-4 w-full border p-4"
+          />
+        </div>
 
         {/* Item Details */}
         <ItemDetails />

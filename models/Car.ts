@@ -43,6 +43,7 @@ type ICar = Document & {
   createdAt: Date;
   updatedAt: Date;
   counter: number;
+  link: string;
 };
 
 const CarSchema = new Schema<ICar>(
@@ -50,6 +51,7 @@ const CarSchema = new Schema<ICar>(
     title: { type: String, required: true },
     price: { type: String, default: null },
     counter: { type: Number, default: 0 },
+    link: { type: String, default: null, required: false },
     features: [
       {
         type: Schema.Types.ObjectId,

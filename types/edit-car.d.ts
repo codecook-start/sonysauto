@@ -16,6 +16,7 @@ export type CarResponse = {
   createdAt: string;
   updatedAt: string;
   counter: number;
+  link: string;
   __v: number;
 };
 

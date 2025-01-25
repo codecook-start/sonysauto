@@ -76,6 +76,7 @@ const useSubmitCarData = () => {
       images: [],
       extra: "",
       details: [],
+      link: "",
     }));
     setCarFormFields((prevFields) =>
       prevFields.map((field) => ({
@@ -134,6 +135,7 @@ const useSubmitCarData = () => {
     formData.append("title", car.title || "");
     formData.append("price", car.price || "");
     formData.append("extra", car.extra || "");
+    formData.append("link", car.link || "");
 
     if (car.images) {
       car.images.forEach((image) => {
@@ -224,6 +226,7 @@ const useSubmitCarData = () => {
     await queryClient.invalidateQueries("get-sections");
     await queryClient.invalidateQueries("get-sections-edit");
   }, [
+    car.link,
     car.pages,
     car.title,
     car.price,

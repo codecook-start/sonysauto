@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
       title: formData.get("title")?.toString() || "",
       price: formData.get("price")?.toString() || "",
       extra: formData.get("extra")?.toString() || "",
+      link: formData.get("link")?.toString() || "",
       details,
       features,
       videos: formData.get("videos")

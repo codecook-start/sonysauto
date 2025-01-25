@@ -45,6 +45,7 @@ export type Detail<T> = {
 
 export type Car = {
   title?: string;
+  link?: string;
   features?: {
     id: string;
     name: string;

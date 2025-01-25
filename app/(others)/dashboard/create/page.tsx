@@ -88,6 +88,16 @@ const Dashboard = () => {
             />
           </div>
         </div>
+        <div className="container-md flex-1">
+          <Label>Link</Label>
+          <Input
+            value={car?.link}
+            onChange={(e) => setCar({ ...car, link: e.target.value })}
+            type="text"
+            placeholder="Link"
+            className="my-4 w-full border p-4"
+          />
+        </div>
         {/* listing Item Details */}
         <ItemDetails />
         {/* listing item features */}
