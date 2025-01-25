@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -30,8 +30,19 @@ import Loader from "@/components/Loader";
 import Link from "next/link";
 import useAuth from "@/hooks/useAuth";
 import { dealer } from "@/data";
+import AOS from "aos";
+import "aos/dist/aos.css"; // Import AOS styles
 
 const Inventory = ({ params: { id } }: { params: { id: string } }) => {
+  useEffect(() => {
+    AOS.init({
+      duration: 600, // Animation duration (0.6 seconds)
+      delay: 100, // Initial delay for the first item
+      once: true, // Trigger animation only once
+      easing: "ease-out", // Easing function
+      offset: 200, // Trigger when the element is 200px away from the viewport
+    });
+  }, []);
   const {
     car,
     isLoading,
@@ -55,7 +66,10 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
   return (
     <div className="my-8 space-y-8">
       {isAuthenticated && (
-        <div className="fixed bottom-2 right-2 z-10 flex gap-2">
+        <div
+          className="fixed bottom-2 right-2 z-10 flex gap-2"
+          data-aos="fade-up"
+        >
           <Link
             shallow
             onClick={(e) => {
@@ -78,7 +92,7 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
           </button>
         </div>
       )}
-      <Breadcrumb className="container-md-mx">
+      <Breadcrumb className="container-md-mx" data-aos="fade-down">
         <BreadcrumbList className="border-b py-4 text-xs text-neutral-800">
           <BreadcrumbItem>
             <BreadcrumbLink href="/">Sony{"'"}s Auto</BreadcrumbLink>
@@ -97,7 +111,7 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="container-md-mx">
+      <div className="container-md-mx" data-aos="fade-right">
         {/* previous */}
         <button className="flex items-center space-x-4 rounded border p-4 text-xs">
           <ArrowLeft size={"1em"} />
@@ -108,7 +122,10 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
         </button>
       </div>
       <div className="container-md-mx grid gap-y-4 text-xs md:grid-cols-10 md:gap-8">
-        <div className="space-y-6 overflow-hidden md:col-span-7">
+        <div
+          className="space-y-6 overflow-hidden md:col-span-7"
+          data-aos="fade-up"
+        >
           <div className="header">
             {/* car name */}
             <h2 className="text-2xl font-bold">{car?.title}</h2>
@@ -145,6 +162,7 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
                 onClick={() => setLightboxVisible(index)}
                 loading="lazy"
                 fetchPriority="low"
+                data-aos="zoom-in"
               />
             ))}
           </CarouselContainer>
@@ -163,13 +181,17 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
         </div>
         <div className="space-y-4 md:col-span-3">
           {/* price */}
-          <div className="price rounded bg-blue-500 py-3 text-center text-white">
+          <div
+            className="price rounded bg-blue-500 py-3 text-center text-white"
+            data-aos="flip-left"
+          >
             <h3 className="text-2xl font-bold">{car?.price || "0.00"}</h3>
           </div>
           {/* chat via whatsapp */}
           <a
             href={`https://wa.me/${dealer.phone}`}
             className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-6 text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            data-aos="flip-left"
           >
             <MessageCircle size={"1em"} />
             <span>Chat via WhatsApp</span>
@@ -178,6 +200,7 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
           <a
             href={`sms:${dealer.phone}`}
             className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-6 text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            data-aos="flip-left"
           >
             <MessageCircle size={"1em"} />
             <span>Message Us</span>
@@ -186,40 +209,61 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
           <Button
             className="w-full gap-2 rounded border-2 py-6 text-xs shadow hover:bg-blue-500 hover:text-white"
             variant={"outline"}
+            data-aos="flip-left"
           >
             <Car size={"1em"} />
             <span>Trade in Form</span>
           </Button>
           {/* offer price */}
-          <OfferPrice carName={car?.title} />
+          <div data-aos="flip-left">
+            <OfferPrice carName={car?.title} />
+          </div>
           {/* youtube iframe */}
-          <iframe
-            className="aspect-video w-full rounded shadow"
-            src="https://www.youtube.com/embed/cUUH5fFXte4?si=ej5G8Aq6zXKVDD6J"
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          ></iframe>
+          <div data-aos="flip-left">
+            <iframe
+              className="aspect-video w-full rounded shadow"
+              src="https://www.youtube.com/embed/cUUH5fFXte4?si=ej5G8Aq6zXKVDD6J"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            ></iframe>
+          </div>
         </div>
       </div>
       {/* insights */}
-      <CarInsights />
+      <div data-aos="fade-up">
+        <CarInsights />
+      </div>
       {/* car summary */}
-      <CarSummary />
+      <div data-aos="fade-up">
+        <CarSummary />
+      </div>
       {/* car highlights */}
-      <CarHighlights />
+      <div data-aos="fade-up">
+        <CarHighlights />
+      </div>
       {/* car features */}
-      <CarFeatures />
+      <div data-aos="fade-up">
+        <CarFeatures />
+      </div>
       {/* car overview */}
-      <CarOverview />
+      <div data-aos="fade-up">
+        <CarOverview />
+      </div>
       {/* message to dealer */}
-      <MessageDealer />
+      <div data-aos="fade-up">
+        <MessageDealer />
+      </div>
       {/* recomendation */}
-      <Recomendation />
-      <Lightbox
-        images={slides}
-        visible={lightboxVisible !== -1}
-        onClose={() => setLightboxVisible(-1)}
-      />
+      <div data-aos="fade-up">
+        <Recomendation />
+      </div>
+      <div data-aos="fade-up">
+        <Lightbox
+          images={slides}
+          visible={lightboxVisible !== -1}
+          onClose={() => setLightboxVisible(-1)}
+        />
+      </div>
     </div>
   );
 };
