@@ -312,14 +312,21 @@ export const createCarPipeline = (
                 {
                   details: {
                     $elemMatch: {
-                      "detail.name": {
-                        $regex: "stockId",
-                        $options: "i",
-                      },
-                      "option.name": { $regex: search, $options: "i" },
+                      $or: [
+                        { "detail.name": { $regex: search, $options: "i" } },
+                        { "option.name": { $regex: search, $options: "i" } },
+                      ],
                     },
                   },
                 },
+                {
+                  features: {
+                    $elemMatch: {
+                      name: { $regex: search, $options: "i" },
+                    },
+                  },
+                },
+                { stockId: { $regex: search, $options: "i" } },
               ],
             },
           },
