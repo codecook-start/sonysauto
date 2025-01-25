@@ -18,7 +18,9 @@ import { slides } from "@/data";
 import { EmblaCarouselType } from "embla-carousel";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
+import AOS from "aos"; // Import AOS JS
+import "aos/dist/aos.css"; // Import AOS CSS
 
 const About = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay()]);
@@ -40,6 +42,13 @@ const About = () => {
     onPrevButtonClick,
     onNextButtonClick,
   } = usePrevNextButtons(emblaApi, onNavButtonClick);
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Animation duration
+      once: true, // Animation occurs only once
+    });
+  }, []);
   return (
     <div>
       <div
@@ -49,6 +58,7 @@ const About = () => {
             "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(/1.jpg)",
           backgroundSize: "cover",
         }}
+        data-aos="fade-up"
       >
         <div className="container-md text-white">
           <h2 className="text-4xl font-bold">About Us</h2>
@@ -59,7 +69,7 @@ const About = () => {
         </div>
       </div>
       {/* breadcrumb */}
-      <Breadcrumb className="container-md">
+      <Breadcrumb className="container-md" data-aos="fade-up">
         <BreadcrumbList className="border-b py-4 text-xs text-neutral-800">
           <BreadcrumbItem>
             <BreadcrumbLink href="/">Sony{"'"}s Auto</BreadcrumbLink>
@@ -71,7 +81,10 @@ const About = () => {
         </BreadcrumbList>
       </Breadcrumb>
       {/* image, title, paragraph, alternate image from left to right, and vice versa */}
-      <section className="container-md my-16 flex flex-col items-center gap-8 lg:flex-row">
+      <section
+        className="container-md my-16 flex flex-col items-center gap-8 lg:flex-row"
+        data-aos="fade-left"
+      >
         <div className="lg:w-1/2">
           <img
             src="/1.jpg"
@@ -91,7 +104,10 @@ const About = () => {
         </div>
       </section>
       {/* image, title, paragraph, alternate image from left to right, and vice versa */}
-      <section className="container-md my-16 flex flex-col items-center gap-8 lg:flex-row">
+      <section
+        className="container-md my-16 flex flex-col items-center gap-8 lg:flex-row"
+        data-aos="fade-right"
+      >
         <div className="lg:w-1/2">
           <h2 className="text-2xl font-bold">Our Mission</h2>
           <p className="my-4 text-neutral-600">
@@ -111,7 +127,7 @@ const About = () => {
         </div>
       </section>
       {/* carousal */}
-      <section className="bg-black py-32">
+      <section className="bg-black py-32" data-aos="zoom-in">
         <div className="container-md space-y-8">
           <h3 className="text-4xl font-bold text-white">Gallery</h3>
           <div className="relative col-span-3 overflow-hidden rounded">
@@ -147,7 +163,7 @@ const About = () => {
         </div>
       </section>
       {/* our team */}
-      <section className="container-md my-16">
+      <section className="container-md my-16" data-aos="fade-up">
         <h3 className="text-4xl font-bold">Our Team</h3>
         <div className="mt-8 grid gap-8 md:grid-cols-3">
           <div className="flex flex-col items-center">
