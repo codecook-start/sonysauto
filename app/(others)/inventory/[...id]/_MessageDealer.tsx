@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { dealer } from "@/data";
 import { carAtom } from "@/jotai/carAtom";
 import { useAtomValue } from "jotai";
-import { Car, MessageCircle } from "lucide-react";
+import { Car, MessageCircle, Mail } from "lucide-react";
 import React from "react";
 
 const MessageDealer = () => {
@@ -15,25 +15,57 @@ const MessageDealer = () => {
         <div className="grid gap-8 md:grid-cols-4">
           <div className="space-y-2">
             {/* chat via whatsapp */}
-            <a
-              href={`https://wa.me/${dealer.phone}`}
-              className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-6 text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-            >
-              <MessageCircle size={"1em"} />
-              <span>Chat via WhatsApp</span>
+            <a href={`https://wa.me/${dealer.phone}`}>
+              <Button
+                className="m-0 flex w-full items-center rounded border-2 p-0 text-xs shadow hover:text-red-500"
+                variant="outline"
+                size={"lg"}
+                data-aos="flip-left"
+              >
+                <div className="m-0 flex h-full w-[50px] items-center justify-center bg-green-500">
+                  <MessageCircle size="2.5em" color="white" />
+                </div>
+                {/* Text Section - Takes Remaining Space */}
+                <span
+                  className="flex-1 text-center"
+                  style={{ fontSize: "16px" }}
+                >
+                  Chat via WhatsApp
+                </span>
+              </Button>
             </a>
             {/* sms */}
-            <a
-              href={`sms:${dealer.phone}`}
-              className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-6 text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-            >
-              <MessageCircle size={"1em"} />
-              <span>Message Us</span>
+            <a href={`sms:${dealer.phone}`}>
+              <Button
+                className="mt-2 flex w-full items-center rounded border-2 p-0 text-xs shadow hover:text-red-500"
+                variant="outline"
+                size={"lg"}
+                data-aos="flip-left"
+              >
+                <div className="m-0 flex h-full w-[50px] items-center justify-center bg-violet-500">
+                  <Mail size="2.5em" color="white" />
+                </div>
+                <span
+                  className="flex-1 text-center"
+                  style={{ fontSize: "16px" }}
+                >
+                  Contact Seller Via Email
+                </span>
+              </Button>
             </a>
             {/* Trade in Form */}
-            <Button className="w-full gap-2 py-6 text-xs" variant={"outline"}>
-              <Car size={"1em"} />
-              <span>Trade in Form</span>
+            <Button
+              className="m-0 flex w-full items-center rounded border-2 p-0 text-xs shadow hover:text-red-500"
+              variant="outline"
+              size={"lg"}
+              data-aos="flip-left"
+            >
+              <div className="m-0 flex h-full w-[50px] items-center justify-center bg-yellow-500">
+                <Car size="2.5em" color="white" />
+              </div>
+              <span className="flex-1 text-center" style={{ fontSize: "16px" }}>
+                Trade in Form
+              </span>
             </Button>
             {/* offer price */}
             <OfferPrice carName={car?.title} />

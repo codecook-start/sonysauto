@@ -14,7 +14,7 @@ import {
 import { ArrowLeft, Clock, MessageCircle, Printer } from "react-feather";
 import CarouselContainer from "@/components/CarouselContainer";
 import { Button } from "@/components/ui/button";
-import { Car, Pencil, Trash2 } from "lucide-react";
+import { Car, Mail, Pencil, Trash2 } from "lucide-react";
 import Lightbox from "@/components/Lightbox";
 import CarInsights from "./_CarInsights";
 import CarSummary from "./_CarSummary";
@@ -190,29 +190,57 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
           {/* chat via whatsapp */}
           <a
             href={`https://wa.me/${dealer.phone}`}
-            className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-6 text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             data-aos="flip-left"
           >
-            <MessageCircle size={"1em"} />
-            <span>Chat via WhatsApp</span>
+            <Button
+              className="m-0 flex w-full items-center rounded border-2 p-0 text-xs shadow hover:text-red-500"
+              variant="outline"
+              size={"lg"}
+              data-aos="flip-left"
+            >
+              <div className="m-0 flex h-full w-[50px] items-center justify-center bg-green-500">
+                <MessageCircle size="2.5em" color="white" />
+              </div>
+              {/* Text Section - Takes Remaining Space */}
+              <span className="flex-1 text-center" style={{ fontSize: "16px" }}>
+                Chat via WhatsApp
+              </span>
+            </Button>
           </a>
           {/* sms */}
           <a
             href={`sms:${dealer.phone}`}
-            className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-6 text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             data-aos="flip-left"
           >
-            <MessageCircle size={"1em"} />
-            <span>Message Us</span>
+            <Button
+              className="m-0 flex w-full items-center rounded border-2 p-0 text-xs shadow hover:text-red-500"
+              variant="outline"
+              size={"lg"}
+              data-aos="flip-left"
+            >
+              <div className="m-0 flex h-full w-[50px] items-center justify-center bg-violet-500">
+                <Mail size="2.5em" color="white" />
+              </div>
+              <span className="flex-1 text-center" style={{ fontSize: "16px" }}>
+                Contact Seller Via Email
+              </span>
+            </Button>
           </a>
           {/* Trade in Form */}
           <Button
-            className="w-full gap-2 rounded border-2 py-6 text-xs shadow hover:bg-blue-500 hover:text-white"
-            variant={"outline"}
+            className="m-0 flex w-full items-center rounded border-2 p-0 text-xs shadow hover:text-red-500"
+            variant="outline"
+            size={"lg"}
             data-aos="flip-left"
           >
-            <Car size={"1em"} />
-            <span>Trade in Form</span>
+            <div className="m-0 flex h-full w-[50px] items-center justify-center bg-yellow-500">
+              <Car size="2.5em" color="white" />
+            </div>
+            <span className="flex-1 text-center" style={{ fontSize: "16px" }}>
+              Trade in Form
+            </span>
           </Button>
           {/* offer price */}
           <div data-aos="flip-left">
