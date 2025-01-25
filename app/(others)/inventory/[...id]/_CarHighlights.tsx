@@ -14,7 +14,10 @@ import React, { useCallback } from "react";
 const CarHighlights = () => {
   const car = useAtomValue(carAtom);
   const slides = (car?.images || []).map((image) => image.path);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay()]);
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, slidesToScroll: 3 },
+    [Autoplay()],
+  );
   const onNavButtonClick = useCallback((emblaApi: EmblaCarouselType) => {
     const autoplay = emblaApi?.plugins()?.autoplay;
     if (!autoplay) return;
@@ -56,14 +59,29 @@ const CarHighlights = () => {
         <div className="overflow-hidden" ref={emblaRef}>
           <div className="flex touch-pan-y">
             {slides.map((slide, index) => (
-              <img
-                src={`${window.location.origin}/${slide}`}
-                alt=""
+              <div
                 key={index}
-                className="mx-1 h-64 w-full rounded object-cover"
-                loading="lazy"
-                fetchPriority="low"
-              />
+                className="relative mx-1 h-64 w-1/3 flex-shrink-0"
+              >
+                {car?.label && (
+                  <span
+                    className="absolute left-0 top-0 max-w-[80%] -rotate-0 transform truncate px-4 py-1 text-xs font-semibold capitalize text-white"
+                    style={{
+                      color: car.label.color || "#FFFFFF",
+                      backgroundColor: car.label.bgColor || "#000000",
+                    }}
+                  >
+                    {car.label.name}
+                  </span>
+                )}
+                <img
+                  src={`${window.location.origin}/${slide}`}
+                  alt=""
+                  className="h-full w-full rounded object-cover"
+                  loading="lazy"
+                  fetchPriority="low"
+                />
+              </div>
             ))}
           </div>
         </div>

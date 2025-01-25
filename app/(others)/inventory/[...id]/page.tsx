@@ -154,6 +154,19 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
               </div>
             </div>
           </div>
+          <div>
+            {car?.label && (
+              <span
+                className="max-w-[80%] px-4 py-1 text-xs font-semibold capitalize text-white"
+                style={{
+                  color: car.label.color || "#FFFFFF",
+                  backgroundColor: car.label.bgColor || "#000000",
+                }}
+              >
+                {car.label.name}
+              </span>
+            )}
+          </div>
           {/* image slider */}
           <CarouselContainer
             classNameContainer="h-auto"
