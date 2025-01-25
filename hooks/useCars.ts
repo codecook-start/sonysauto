@@ -140,6 +140,7 @@ export const useCars = () => {
     loadPrev,
     setPage,
     refetch,
+    setPagination,
     saveOrder: { mutate: saveOrder, isLoading: isPatching },
     ...rest,
   };
