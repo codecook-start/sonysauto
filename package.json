@@ -46,12 +46,14 @@
     "react-dom": "^18",
     "react-feather": "^2.0.10",
     "react-query": "^3.39.3",
+    "react-responsive-carousel": "^3.2.23",
     "sharp": "^0.33.5",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@types/aos": "^3.0.7",
     "@types/bcryptjs": "^2.4.6",
     "@types/fslightbox-react": "^1.7.7",
     "@types/jsonwebtoken": "^9.0.7",
@@ -61,7 +63,6 @@
     "@types/react": "^18",
     "@types/react-color": "^3.0.13",
     "@types/react-dom": "^18",
-    "@types/aos": "^3.0.7",
     "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.12",

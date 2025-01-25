@@ -1,16 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useCallback, useEffect, useState } from "react";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog";
-import { X } from "lucide-react";
-import {
-  NextButton,
-  PrevButton,
-  usePrevNextButtons,
-} from "./EmblaCarouselArrowButtons";
-import { EmblaCarouselType } from "embla-carousel";
-import Autoplay from "embla-carousel-autoplay";
-import useEmblaCarousel from "embla-carousel-react";
-import { cn } from "@/lib/utils";
+import React, { useState } from "react";
+import { Carousel } from "react-responsive-carousel"; // Import Carousel
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import styles for the carousel
+import { Maximize, Minimize, Pause, Play, X, ZoomIn } from "lucide-react";
 
 type Image = string;
 
@@ -21,55 +14,29 @@ type LightboxProps = {
 };
 
 const Lightbox: React.FC<LightboxProps> = ({ images, visible, onClose }) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay()]);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isZoomed, setIsZoomed] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const onNavButtonClick = useCallback((emblaApi: EmblaCarouselType) => {
-    const autoplay = emblaApi?.plugins()?.autoplay;
-    if (!autoplay) return;
 
-    const resetOrStop =
-      autoplay.options.stopOnInteraction === false
-        ? autoplay.reset
-        : autoplay.stop;
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullScreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullScreen(false);
+    }
+  };
 
-    resetOrStop();
-  }, []);
+  const toggleZoom = () => {
+    setIsZoomed(!isZoomed);
+  };
 
-  const {
-    prevBtnDisabled,
-    nextBtnDisabled,
-    onPrevButtonClick,
-    onNextButtonClick,
-  } = usePrevNextButtons(emblaApi, onNavButtonClick);
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
 
-  const [thumbnailRef, thumbnailApi] = useEmblaCarousel(
-    {
-      containScroll: "keepSnaps",
-      dragFree: true,
-    },
-    [Autoplay()],
-  );
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi || !thumbnailApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-    thumbnailApi.scrollTo(emblaApi.selectedScrollSnap());
-  }, [emblaApi, thumbnailApi, setSelectedIndex]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    onSelect();
-
-    emblaApi.on("select", onSelect).on("reInit", onSelect);
-  }, [emblaApi, onSelect]);
-
-  const onThumbnailClick = useCallback(
-    (index: number) => {
-      if (!emblaApi || !thumbnailApi) return;
-      emblaApi.scrollTo(index);
-    },
-    [emblaApi, thumbnailApi],
-  );
   return (
     <Dialog open={visible} onOpenChange={onClose}>
       <DialogContent
@@ -81,70 +48,64 @@ const Lightbox: React.FC<LightboxProps> = ({ images, visible, onClose }) => {
       >
         <div
           onClick={(e) => e.stopPropagation()}
-          style={{
-            maxWidth: "min(60rem, calc(100vw - 2rem))",
-            maxHeight: "min(50rem, calc(100vh - 2rem))",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          className="relative flex h-full w-full flex-col items-center justify-center"
         >
-          <div className="relative col-span-3 overflow-hidden rounded">
+          <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
             <div className="embla__button">
-              <div className="absolute left-4 top-1/2 z-10 -translate-y-1/2">
-                <PrevButton
-                  onClick={onPrevButtonClick}
-                  disabled={prevBtnDisabled}
-                />
-              </div>
-              <div className="absolute right-4 top-1/2 z-10 -translate-y-1/2">
-                <NextButton
-                  onClick={onNextButtonClick}
-                  disabled={nextBtnDisabled}
-                />
-              </div>
-            </div>
-            <div className="overflow-hidden" ref={emblaRef}>
-              <div className="flex touch-pan-y">
-                {images.map((slide, index) => (
-                  <img
-                    src={`${window.location.origin}/${slide}`}
-                    alt=""
-                    key={index}
-                    className="mx-1 w-full rounded object-cover object-center"
-                    style={{
-                      maxWidth: "min(60rem, calc(100vw - 2rem))",
-                      maxHeight: "min(50rem, calc(100vh - 2rem))",
-                    }}
-                    loading="lazy"
-                    fetchPriority="low"
-                  />
-                ))}
-              </div>
+              <button
+                onClick={toggleFullScreen}
+                className="absolute left-4 top-4 z-50 rounded-full bg-white p-2"
+              >
+                {isFullScreen ? <Minimize size={24} /> : <Maximize size={24} />}
+              </button>
+              {/* Play/Pause Button */}
+              <button
+                onClick={togglePlayPause}
+                className="absolute left-16 top-4 z-50 rounded-full bg-white p-2"
+              >
+                {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+              </button>
+              {/* Zoom Button */}
+              <button
+                onClick={toggleZoom}
+                className="absolute left-28 top-4 z-50 rounded-full bg-white p-2"
+              >
+                <ZoomIn size={24} />
+              </button>
             </div>
             {/* thumbnail */}
-            <div className="overflow-hidden" ref={thumbnailRef}>
-              <div className="flex touch-pan-y">
-                {images.map((child, index) => (
-                  <button
+            <div className="relative flex h-full w-full max-w-full items-center justify-center">
+              <Carousel
+                selectedItem={selectedIndex}
+                onChange={setSelectedIndex}
+                infiniteLoop
+                showThumbs={false}
+                autoPlay={isPlaying}
+                stopOnHover={false}
+                emulateTouch
+                dynamicHeight={false}
+                showArrows={true}
+                className="mx-auto max-h-[80vh] w-full max-w-[80vw]"
+              >
+                {images.map((image, index) => (
+                  <div
                     key={index}
-                    onClick={() => onThumbnailClick(index)}
-                    className={cn(
-                      "aspect-video h-16 flex-shrink-0 overflow-hidden rounded border-2 border-transparent",
-                      index === selectedIndex && "border-blue-500",
-                    )}
+                    className="flex h-full w-full items-center justify-center"
                   >
                     <img
-                      src={`${window.location.origin}/${child}`}
-                      alt=""
-                      className="h-full w-full object-cover"
+                      src={`${window.location.origin}/${image}`} // Dynamically use the image URL passed in props
+                      alt={`Image ${index + 1}`}
+                      className={`w-full object-contain transition-transform duration-300 ${
+                        isZoomed ? "scale-150" : "scale-200"
+                      }`}
+                      style={{ maxHeight: "80vh", maxWidth: "100%" }}
+                      // className="h-full w-full object-cover"
                       loading="lazy"
                       fetchPriority="low"
                     />
-                  </button>
+                  </div>
                 ))}
-              </div>
+              </Carousel>
             </div>
           </div>
         </div>
