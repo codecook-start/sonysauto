@@ -7,12 +7,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { titleMap } from "@/data";
 import { CarPagination } from "@/types/car";
 import { delay } from "@/lib/utils";
+import useCarOrdering from "./useCarOrdering";
 
 export const useCars = () => {
   const [cars, setCars] = useAtom(carsAtom);
   const [pagination, setPagination] = useAtom(carPaginationAtom);
   const router = useRouter();
   const pathname = usePathname();
+  const {
+    patchOrdering: { mutate: patchOrdering, isLoading: isPatching },
+  } = useCarOrdering();
 
   const fetchCars = async () => {
     let url = `/api/car?page=${pagination.page}&limit=${pagination.limit}`;
@@ -46,7 +50,14 @@ export const useCars = () => {
     if (pagination.maxPrice) {
       url += `&maxPrice=${pagination.maxPrice}`;
     }
-    const { data } = await axios.get(url);
+    const { data } = await axios.get(url, {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return data;
   };
 
@@ -61,6 +72,9 @@ export const useCars = () => {
   >(["cars", pathname], fetchCars, {
     refetchInterval: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
+    cacheTime: 0,
+    staleTime: 0,
+    optimisticResults: true,
     onSuccess: async (response) => {
       setCars(response.data);
       setPagination((prev) => ({
@@ -72,10 +86,10 @@ export const useCars = () => {
       }));
       await delay(100);
       const scrollPosition = sessionStorage.getItem("scrollPosition");
-      console.log({ scrollPosition });
       if (scrollPosition) {
+        const { [pathname]: position } = JSON.parse(scrollPosition);
         window.scrollTo({
-          top: parseInt(scrollPosition) || 0,
+          top: position || 0,
           behavior: "smooth",
         });
       }
@@ -111,8 +125,14 @@ export const useCars = () => {
     router.refresh();
   };
 
+  const saveOrder = () => {
+    const ids = cars.map((field) => field._id);
+    patchOrdering(ids);
+  };
+
   return {
     cars,
+    setCars,
     isLoading,
     isError,
     pagination,
@@ -120,6 +140,7 @@ export const useCars = () => {
     loadPrev,
     setPage,
     refetch,
+    saveOrder: { mutate: saveOrder, isLoading: isPatching },
     ...rest,
   };
 };

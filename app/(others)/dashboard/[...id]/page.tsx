@@ -20,10 +20,12 @@ import { MultiSelectWithCustom } from "@/components/ui/multi-select-with-custom"
 import { useCar } from "@/hooks/useCar";
 import Loader from "@/components/Loader";
 import useUpdateCar from "@/hooks/useUpdateCar";
+import CarLabel from "./_components/CarLabel";
+import { SparklesIcon } from "lucide-react";
 
 const Dashboard = ({ params: { id } }: { params: { id: string } }) => {
   const { car: carData, setCar, isLoading: isLoadingCar, isError } = useCar(id);
-  const { handleUpdate, isLoading } = useUpdateCar();
+  const { handleUpdate, isLoading, generateTitle } = useUpdateCar();
 
   if (isLoadingCar || isError)
     return (
@@ -62,15 +64,24 @@ const Dashboard = ({ params: { id } }: { params: { id: string } }) => {
 
         {/* Title & Price Inputs */}
         <div className="container-md mt-8 flex gap-4">
-          <div className="flex-1">
+          <div className="flex-1 space-y-4">
             <Label>Listing Title</Label>
-            <Input
-              value={carData?.title}
-              onChange={(e) => setCar({ ...carData, title: e.target.value })}
-              type="text"
-              placeholder="Title"
-              className="my-4 w-full border p-4"
-            />
+            <div className="flex rounded border">
+              <input
+                type="text"
+                value={carData?.title}
+                onChange={(e) => setCar({ ...carData, title: e.target.value })}
+                placeholder="Title"
+                className="mx-4 flex-1 text-sm outline-none"
+              />
+              <Button
+                onClick={generateTitle}
+                variant="ghost"
+                className="rounded text-neutral-500"
+              >
+                <SparklesIcon size={"1.25em"} />
+              </Button>
+            </div>
           </div>
           <div className="flex-1">
             <Label>Price</Label>
@@ -120,10 +131,6 @@ const Dashboard = ({ params: { id } }: { params: { id: string } }) => {
                 value: "cayman",
               },
               {
-                label: "Reserved",
-                value: "reserved",
-              },
-              {
                 label: "Sold",
                 value: "sold",
               },
@@ -142,6 +149,8 @@ const Dashboard = ({ params: { id } }: { params: { id: string } }) => {
             animation={0}
           />
         </div>
+
+        <CarLabel id={id} />
 
         {/* Extra Fields */}
         <div className="container-md mt-8">

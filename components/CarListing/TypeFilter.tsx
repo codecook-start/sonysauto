@@ -16,7 +16,7 @@ const TypeFilter = () => {
     refetchFeatures,
     refetchMakes,
     refetchModels,
-    isLoading,
+    isLoadingTypes,
     isRefetchingTypes,
   } = useFilter();
 
@@ -57,7 +57,7 @@ const TypeFilter = () => {
     ]);
   };
 
-  if (isRefetchingTypes || (isLoading && (!types || !types.length)))
+  if (isRefetchingTypes || isLoadingTypes)
     return <Loader style={{}} className="h-40" />;
 
   if (!types || !types.length) return null;
@@ -89,6 +89,7 @@ const TypeFilter = () => {
                     alt={`${type.name} icon`}
                     className="h-full w-full object-contain"
                     loading="lazy"
+                    fetchPriority="low"
                   />
                 </div>
               )}

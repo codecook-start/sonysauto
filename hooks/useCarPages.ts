@@ -12,7 +12,18 @@ export const useCarPages = (id: string) => {
     id: string;
     pages: string[];
   }) => {
-    const { data } = await axios.put(`/api/car/pages/${id}`, { pages });
+    const { data } = await axios.put(
+      `/api/car/pages/${id}`,
+      { pages },
+      {
+        headers: {
+          "Cache-Control": "no-cache",
+          cache: "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      },
+    );
     return data;
   };
 

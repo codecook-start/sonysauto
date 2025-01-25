@@ -1,12 +1,27 @@
 services:
-  sonysauto-app:
+  app:
     build: .
     volumes:
       - uploads:/app/public/uploads
     environment:
       - NODE_ENV=production
     ports:
-      - "3000:3000"
+      - "8000:3000"
+    env_file:
+      - .env
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=Be9KfQnULhttaXi
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - default
 
 volumes:
   uploads:
+  mongo-data:

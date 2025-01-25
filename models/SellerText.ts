@@ -5,6 +5,7 @@ type SellerTextDocument = Document & {
   title: string;
   text: string;
   scope: "global" | "local";
+  used: boolean;
 };
 
 const SellerTextSchema = new Schema<SellerTextDocument>({
@@ -16,6 +17,7 @@ const SellerTextSchema = new Schema<SellerTextDocument>({
     enum: ["global", "local"],
     default: "global",
   },
+  used: { type: Boolean, default: false },
 });
 
 export const SellerNoteText: Model<SellerTextDocument> =

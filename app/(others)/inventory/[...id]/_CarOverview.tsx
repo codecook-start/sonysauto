@@ -16,7 +16,7 @@ const CarOverview = () => {
         {sellerNotes.map((note, index) => (
           <p key={index} className="space-y-2 text-xs leading-normal">
             <span className="flex font-bold capitalize leading-snug underline">
-              {note.note.title}
+              {note.note?.title || ""}
             </span>
             <div
               dangerouslySetInnerHTML={{

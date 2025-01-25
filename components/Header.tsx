@@ -10,30 +10,28 @@ import { Input } from "@/components/ui/input";
 import { carPaginationAtom } from "@/jotai/carsAtom";
 import { useAtom } from "jotai";
 import { useCars } from "@/hooks/useCars";
-import { useQueryClient } from "react-query";
 import useAuth from "@/hooks/useAuth";
-import { useFilter } from "@/hooks/useFilter";
 import { cn } from "@/lib/utils";
+import { useFilter } from "@/hooks/useFilter";
 
 const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [pagination, setPagination] = useAtom(carPaginationAtom);
-  const queryClient = useQueryClient();
   const { isRefetching: isCarsRefetching, refetch } = useCars();
   const { resetAll } = useFilter();
   const { isAuthenticated, isLoading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const handleSearch = async () => {
-    await queryClient.invalidateQueries("cars");
     await refetch();
     setShowSearch(false);
   };
 
-  const handleClick = () => {
+  const handleRoute = async () => {
     resetAll();
   };
+
   return (
     <nav className="flex flex-col">
       {/* upper */}
@@ -41,7 +39,7 @@ const Header = () => {
         {/* contact */}
         <ul className="container-md flex justify-end gap-2 lg:gap-8">
           {contact.map(
-            ({ name, link, icon: Icon, address, timing, number }) => (
+            ({ name, link, icon: Icon, address, timing, number, email }) => (
               <li
                 key={name}
                 className={address || timing ? "hidden lg:block" : ""}
@@ -51,10 +49,10 @@ const Header = () => {
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center gap-2"
-                  onClick={handleClick}
                 >
                   <Icon size={"1em"} />
                   {number && <span>{number}</span>}
+                  {email && <span>{email}</span>}
                   {address && <span>{address}</span>}
                   {timing && <span>{timing}</span>}
                 </a>
@@ -71,7 +69,7 @@ const Header = () => {
                   shallow
                   href={"/dashboard/create"}
                   className="flex items-center gap-2"
-                  onClick={handleClick}
+                  onClick={() => handleRoute()}
                 >
                   <User size={"1em"} />
                   <span>Dashboard</span>
@@ -100,10 +98,16 @@ const Header = () => {
       <div className="bg-black">
         <div className="container-md flex items-center justify-between py-2 text-white lg:py-4">
           {/* logo */}
-          <Link shallow href={"/"} onClick={handleClick}>
+          <Link shallow href={"/"}>
             {
               // eslint-disable-next-line @next/next/no-img-element
-              <img src="/logo.png" alt="header" className="w-32 lg:w-40" />
+              <img
+                src="/logo.png"
+                alt="header"
+                className="w-32 lg:w-40"
+                loading="lazy"
+                fetchPriority="low"
+              />
             }
           </Link>
           {/* address, phone, social */}
@@ -113,7 +117,6 @@ const Header = () => {
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-2"
-              onClick={handleClick}
             >
               <div className="rounded-full border-2 border-blue-600 p-2">
                 <MapPin size={"1em"} color="#2563eb" strokeWidth={4} />
@@ -124,18 +127,17 @@ const Header = () => {
               </span>
             </a>
             <a
-              href="tel:1234567890"
+              href="tel:+13453245773"
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-2"
-              onClick={handleClick}
             >
               <div className="rounded-full border-2 border-blue-600 p-2">
                 <Phone size={"1em"} color="#2563eb" strokeWidth={4} />
               </div>
               <div className="flex flex-col">
                 <span className="text-xs text-blue-500">Sales</span>
-                <span className="text-sm">123-456-7890</span>
+                <span className="text-sm">+13453245773</span>
               </div>
             </a>
             <div className="flex h-min gap-2">
@@ -146,7 +148,6 @@ const Header = () => {
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full bg-neutral-800 p-2 transition-colors hover:bg-neutral-600"
-                  onClick={handleClick}
                 >
                   <Icon size={"1em"} />
                 </a>
@@ -191,6 +192,7 @@ const Header = () => {
                   key={route.route}
                   className="cursor-pointer"
                   onClick={() => {
+                    handleRoute();
                     router.push(route.route);
                     setShowMenu(false);
                   }}
@@ -217,8 +219,8 @@ const Header = () => {
                       "my-2 flex whitespace-nowrap rounded px-4 py-3 hover:bg-black/50 hover:text-white",
                       isActive && "bg-blue-500 text-white hover:bg-blue-500",
                     )}
+                    onClick={() => handleRoute()}
                     href={route}
-                    onClick={handleClick}
                   >
                     {name}
                   </Link>
@@ -230,8 +232,8 @@ const Header = () => {
             <Link
               shallow
               href={"/compare"}
+              onClick={() => handleRoute()}
               className="flex items-center px-4 py-3 hover:bg-gray-100"
-              onClick={handleClick}
             >
               Compare
             </Link>
@@ -255,6 +257,7 @@ const Header = () => {
             onSubmit={(e) => {
               e.preventDefault();
               handleSearch();
+              handleRoute();
             }}
             className="flex flex-1 items-center"
           >

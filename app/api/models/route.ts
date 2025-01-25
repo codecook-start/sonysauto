@@ -7,6 +7,7 @@ import { Car } from "@/models/Car";
 // import path from "path";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type DetailFilter = { name: string; values: string[] };
 
@@ -57,9 +58,18 @@ export async function GET(request: NextRequest) {
     const pipeline = [
       {
         $match: {
-          ...(pathname
-            ? { $or: [{ pages: pathname }, { pages: { $size: 0 } }] }
-            : {}),
+          ...(() => {
+            switch (pathname) {
+              case "inventory":
+                return {};
+              case "reserved":
+                return {
+                  pages: { $in: ["reserved", "sold"] },
+                };
+              default:
+                return { $or: [{ pages: pathname }, { pages: { $size: 0 } }] };
+            }
+          })(),
         },
       },
       {

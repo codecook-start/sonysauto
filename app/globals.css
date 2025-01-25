@@ -100,3 +100,7 @@ body {
   transform: skew(-15deg);
   @apply bg-blue-500;
 }
+
+.ql-picker-options {
+  @apply !z-50 rounded-b;
+}

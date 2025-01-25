@@ -1,6 +1,7 @@
 import OfferPrice from "@/components/dialog/OfferPrice";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { dealer } from "@/data";
 import { carAtom } from "@/jotai/carAtom";
 import { useAtomValue } from "jotai";
 import { Car, MessageCircle } from "lucide-react";
@@ -14,26 +15,23 @@ const MessageDealer = () => {
         <div className="grid gap-8 md:grid-cols-4">
           <div className="space-y-2">
             {/* chat via whatsapp */}
-            <Button
-              className="w-full gap-2 rounded border-2 py-6 text-xs shadow"
-              variant={"outline"}
+            <a
+              href={`https://wa.me/${dealer.phone}`}
+              className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-6 text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             >
               <MessageCircle size={"1em"} />
               <span>Chat via WhatsApp</span>
-            </Button>
+            </a>
             {/* sms */}
-            <Button
-              className="w-full gap-2 rounded border-2 py-6 text-xs shadow"
-              variant={"outline"}
+            <a
+              href={`sms:${dealer.phone}`}
+              className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-6 text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             >
               <MessageCircle size={"1em"} />
               <span>Message Us</span>
-            </Button>
+            </a>
             {/* Trade in Form */}
-            <Button
-              className="w-full gap-2 rounded border-2 py-6 text-xs shadow"
-              variant={"outline"}
-            >
+            <Button className="w-full gap-2 py-6 text-xs" variant={"outline"}>
               <Car size={"1em"} />
               <span>Trade in Form</span>
             </Button>

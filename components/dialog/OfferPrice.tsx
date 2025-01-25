@@ -19,10 +19,7 @@ const OfferPrice = ({ carName }: { carName?: string }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          className="w-full gap-2 rounded border-2 py-6 text-xs shadow hover:bg-blue-500 hover:text-white"
-          variant={"outline"}
-        >
+        <Button className="w-full gap-2 py-6 text-xs" variant={"outline"}>
           <DollarSign size={"1em"} />
           <span>Make an Offer Price</span>
         </Button>

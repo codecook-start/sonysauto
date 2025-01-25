@@ -15,7 +15,14 @@ export const useDetails = () => {
   const [carFormFields, setCarFormFields] = useAtom(CarFormFieldsAtom);
 
   const getDetails = async (): Promise<CarFormField[]> => {
-    const response = await axios.get("/api/details");
+    const response = await axios.get("/api/details", {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return response.data;
   };
 
@@ -24,7 +31,13 @@ export const useDetails = () => {
     formData.append("name", detail.name || "");
 
     const response = await axios.post("/api/details", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
     });
 
     return response.data.detail;
@@ -56,12 +69,11 @@ export const useDetails = () => {
   >({
     queryKey: ["get-details"],
     queryFn: getDetails,
-    staleTime: 5 * 10 * 60 * 1000,
-    cacheTime: 5 * 10 * 60 * 1000,
+    staleTime: 0,
+    cacheTime: 0,
     refetchOnWindowFocus: false,
     refetchInterval: 5 * 10 * 60 * 1000,
     onSuccess(data) {
-      console.log("Data:", data);
       setCarFormFields((prev) =>
         data.map((detail) => {
           return {

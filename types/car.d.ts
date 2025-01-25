@@ -58,6 +58,7 @@ export type Car = {
   details: Detail<string[]>[];
   domain?: string[];
   pages?: string[];
+  label?: CarLabel;
 };
 
 export type UploadedImage = {
@@ -105,6 +106,11 @@ export type Text = {
   text: string;
   scope: string;
   checked?: boolean;
+};
+
+export type Note = {
+  _id: string;
+  title: string;
 };
 
 export type SellerNote = {
@@ -177,6 +183,7 @@ export type CarSellerText = {
   title: string;
   text: string;
   scope?: string;
+  used?: boolean;
 };
 
 export type CarSellerNoteFormField = {
@@ -198,4 +205,11 @@ export type Filter = {
   name: string;
   icon: string | null;
   values: FilterValue[];
+};
+
+export type CarLabel = {
+  _id: string;
+  name: string;
+  color: string | null;
+  bgColor: string | null;
 };

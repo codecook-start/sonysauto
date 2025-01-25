@@ -1,4 +1,5 @@
 "use client";
+
 import { routes } from "@/data";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -23,6 +24,8 @@ const Header = () => {
           style={{
             width: "12rem",
           }}
+          loading="lazy"
+          fetchPriority="low"
         />
       }
       <ul className="ml-40 hidden gap-8 text-xs font-semibold text-white lg:flex">

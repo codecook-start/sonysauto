@@ -117,6 +117,8 @@ const Lightbox: React.FC<LightboxProps> = ({ images, visible, onClose }) => {
                       maxWidth: "min(60rem, calc(100vw - 2rem))",
                       maxHeight: "min(50rem, calc(100vh - 2rem))",
                     }}
+                    loading="lazy"
+                    fetchPriority="low"
                   />
                 ))}
               </div>
@@ -137,6 +139,8 @@ const Lightbox: React.FC<LightboxProps> = ({ images, visible, onClose }) => {
                       src={`${window.location.origin}/${child}`}
                       alt=""
                       className="h-full w-full object-cover"
+                      loading="lazy"
+                      fetchPriority="low"
                     />
                   </button>
                 ))}

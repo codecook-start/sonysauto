@@ -20,6 +20,7 @@ import {
   Tag,
   Trash2,
   Pencil,
+  GripVertical,
 } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 import { Label } from "@/components/ui/label";
@@ -28,10 +29,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useCompare } from "@/hooks/useCompare";
 import { useCar } from "@/hooks/useCar";
 import Link from "next/link";
-import { CarResponse } from "@/types/edit-car";
+import { CarResponse, Details } from "@/types/edit-car";
 import { MultiSelectWithCustom } from "@/components/ui/multi-select-with-custom";
-import { capitalize, getBadge } from "@/lib/utils";
+import { capitalize, inventoryCardDetailsOrder } from "@/lib/utils";
 import Image from "next/image";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const Loader = ({ size = "1em" }) => (
   <svg
@@ -122,7 +125,17 @@ const itemIcons = [
   Tag,
 ];
 
-const InventoryCard = ({ car }: { car: CarResponse }) => {
+const InventoryCard = ({
+  car,
+  onSelect,
+  isDragging,
+  isSelected,
+}: {
+  car: CarResponse;
+  onSelect: (id: string) => void;
+  isDragging: boolean;
+  isSelected: boolean;
+}) => {
   const {
     deleteCar: { mutate: deleteCar, isLoading: isDeleting },
   } = useCar(car._id);
@@ -131,6 +144,9 @@ const InventoryCard = ({ car }: { car: CarResponse }) => {
   const { isAuthenticated, isLoginLoading } = useAuth();
   const { ids, setIds } = useCompare();
   const { mutate } = useCarPages(car._id);
+
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: car._id });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { left, width } = e.currentTarget.getBoundingClientRect();
@@ -152,20 +168,49 @@ const InventoryCard = ({ car }: { car: CarResponse }) => {
       </div>
     );
 
-  const status = getBadge(car.pages);
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    boxShadow: isDragging
+      ? "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)"
+      : "",
+  };
 
   return (
-    <div className="group relative h-full">
+    <div ref={setNodeRef} style={style} className="group relative h-full">
       <div className="absolute -inset-0 rounded-xl bg-gradient-to-r from-[#008559] via-[#0073e5] to-[#6842ff] opacity-25 blur-sm transition-opacity duration-500 group-hover:opacity-90 group-hover:blur-md"></div>
       {/* edit and delete */}
       {isAuthenticated && (
-        <div className="absolute left-2 top-2 z-10 flex gap-2">
+        <div className="absolute right-2 top-2 z-10 flex gap-2">
+          <div
+            {...attributes}
+            {...listeners}
+            className="cursor-move rounded-full border border-black/10 bg-white p-2 hover:shadow-md"
+            title="Drag"
+          >
+            <GripVertical className="h-5 w-5 text-gray-500" />
+          </div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            title="Select"
+            className="flex aspect-square items-center justify-center rounded-full border border-black/10 bg-white p-2 text-black hover:shadow-md"
+          >
+            <Checkbox
+              id={"select-" + car._id}
+              className="scale-90"
+              checked={isSelected}
+              onCheckedChange={() => onSelect(car._id)}
+            />
+          </div>
           <Link
             shallow
             onClick={(e) => {
               e.stopPropagation();
             }}
-            className="rounded-full bg-white p-2 text-black hover:shadow-md"
+            className="flex aspect-square items-center justify-center rounded-full border border-black/10 bg-white p-2 text-black hover:shadow-md"
             href={`/dashboard/${car._id}/`}
           >
             <Pencil size={"1em"} color="black" />
@@ -176,7 +221,7 @@ const InventoryCard = ({ car }: { car: CarResponse }) => {
               e.stopPropagation();
               deleteCar();
             }}
-            className="rounded-full bg-white p-2 text-black hover:shadow-md disabled:animate-pulse disabled:cursor-not-allowed disabled:bg-white/75"
+            className="flex aspect-square items-center justify-center rounded-full border border-black/10 bg-white p-2 text-black hover:shadow-md disabled:animate-pulse disabled:cursor-not-allowed disabled:bg-white/75"
           >
             {!isDeleting ? <Trash2 size={"1em"} color="red" /> : <Loader />}
           </button>
@@ -189,7 +234,7 @@ const InventoryCard = ({ car }: { car: CarResponse }) => {
             e.stopPropagation();
           }}
           title="Add to compare"
-          className="absolute left-2 top-2 z-10 flex items-center justify-center gap-2 rounded-full bg-white px-3 py-1 opacity-0 transition-opacity hover:shadow-md group-hover:opacity-100"
+          className="absolute right-2 top-2 z-10 flex items-center justify-center gap-2 rounded-full bg-white px-3 py-1 opacity-0 transition-opacity hover:shadow-md group-hover:opacity-100"
         >
           <span className="text-black">Compare</span>
           <Checkbox
@@ -214,12 +259,12 @@ const InventoryCard = ({ car }: { car: CarResponse }) => {
           <div onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
             {/* Image Section */}
             <div className="image relative aspect-[4/3] w-full overflow-hidden">
-              <Image
+              <img
                 className="h-full w-full object-cover"
                 src={"/" + slides[currentImage]?.path}
-                alt={`inventory-${currentImage}`}
-                layout="fill"
-                objectFit="cover"
+                alt={car.title || "Car Image"}
+                loading="lazy"
+                fetchPriority="low"
               />
 
               {/* Display overlay for 'n more photos' */}
@@ -243,12 +288,15 @@ const InventoryCard = ({ car }: { car: CarResponse }) => {
               </div>
 
               {/* status badge */}
-              {status && (
+              {car.label && (
                 <span
-                  className="absolute -right-16 top-6 rotate-45 transform px-20 py-2 text-xs font-semibold capitalize text-white"
-                  style={{ backgroundColor: status.color }}
+                  className="absolute -left-16 top-6 -rotate-45 transform px-20 py-2 text-xs font-semibold capitalize text-white"
+                  style={{
+                    color: car.label.color || "#FFFFFF",
+                    backgroundColor: car.label.bgColor || "#000000",
+                  }}
                 >
-                  {status.text}
+                  {car.label.name}
                 </span>
               )}
             </div>
@@ -264,13 +312,15 @@ const InventoryCard = ({ car }: { car: CarResponse }) => {
 
             <div className="content flex flex-1 flex-col justify-between p-2">
               <ul className="grid grid-cols-3 gap-2 text-xs text-neutral-500">
-                {(car.details || [])
-                  .filter((item) => !!item.option)
+                {inventoryCardDetailsOrder(
+                  (car.details || []).filter((item) => !!item.option),
+                )
                   .slice(0, 6)
-                  ?.map((item: any, index: number) => (
+                  ?.map((item: Details, index: number) => (
                     <li
                       key={index}
                       className="flex flex-col items-center gap-1 rounded border px-2 py-1"
+                      title={capitalize(item.detail.name)}
                     >
                       {item.option?.icon ? (
                         <Image
@@ -309,10 +359,6 @@ const InventoryCard = ({ car }: { car: CarResponse }) => {
                 {
                   label: "Inventory in Cayman",
                   value: "cayman",
-                },
-                {
-                  label: "Reserved",
-                  value: "reserved",
                 },
                 {
                   label: "Sold",

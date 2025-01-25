@@ -30,7 +30,7 @@ const useSubmitCarData = () => {
   const [car, setCar] = useAtom(CarLocalAtom);
   const [carFormFields, setCarFormFields] = useAtom(CarFormFieldsAtom);
   const features = useAtomValue(featuresAtom);
-  const section = useAtomValue(CarSellerNotesAtom);
+  const [section, setSection] = useAtom(CarSellerNotesAtom);
   const setImages = useSetAtom(imagesAtom);
   const { toast } = useToast();
   const {
@@ -39,6 +39,32 @@ const useSubmitCarData = () => {
   const {
     createParagraph: { mutateAsync: createParagraph },
   } = useParagraph();
+
+  const generateTitle = useCallback(() => {
+    if (!carFormFields) return;
+
+    const fieldValues = carFormFields.reduce<Record<string, string>>(
+      (acc, field) => {
+        acc[field.name.toLowerCase()] = field.selectedValues?.[0]?.name || "";
+        return acc;
+      },
+      {},
+    );
+
+    const { year, make, model, fuel, seats } = fieldValues;
+
+    const title = [
+      year,
+      make,
+      model,
+      fuel.toLowerCase() === "hybrid" ? "Hybrid" : "",
+      seats && +seats > 5 ? `${seats} seats` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    setCar({ ...car, title });
+  }, [car, carFormFields, setCar]);
 
   const reset = useCallback(() => {
     setCar((prevCar) => ({
@@ -91,6 +117,19 @@ const useSubmitCarData = () => {
 
   const handleSubmit = useCallback(async () => {
     const formData = new FormData();
+
+    if (!car.pages || !car.pages.length) {
+      toast({
+        title: "Error",
+        description: "Please add at least one page",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!car.title) {
+      generateTitle();
+    }
 
     formData.append("title", car.title || "");
     formData.append("price", car.price || "");
@@ -157,6 +196,7 @@ const useSubmitCarData = () => {
           ),
         })),
     );
+    setSection([]);
     formData.append("sellerNotes", JSON.stringify(sellerNotes));
 
     if (car.videos) {
@@ -173,27 +213,37 @@ const useSubmitCarData = () => {
     if (car.pages) {
       formData.append("pages", JSON.stringify(car.pages));
     }
-    console.log({
-      formData: Object.fromEntries(formData.entries()),
-    });
+    if (car.label) {
+      formData.append("label", car.label._id);
+    }
     mutation.mutate(formData);
+    await queryClient.invalidateQueries("get-sections");
+    await queryClient.invalidateQueries("get-sections-edit");
   }, [
-    addCarDetailOption,
+    car.pages,
+    car.title,
+    car.price,
     car.extra,
     car.images,
-    car.pages,
-    car.price,
-    car.title,
     car.videos,
+    car.label,
     carFormFields,
-    createParagraph,
     features,
-    mutation,
     section,
+    setSection,
+    mutation,
+    queryClient,
     toast,
+    generateTitle,
+    addCarDetailOption,
+    createParagraph,
   ]);
 
-  return { handleSubmit, isLoading: mutation.isLoading };
+  return {
+    handleSubmit,
+    isLoading: mutation.isLoading,
+    generateTitle,
+  };
 };
 
 export default useSubmitCarData;

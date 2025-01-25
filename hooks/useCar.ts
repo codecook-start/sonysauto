@@ -21,12 +21,26 @@ export const useCar = (id: string) => {
   const { setFeatures } = useEditFeatures();
 
   const fetchCar = async () => {
-    const { data } = await axios.get<CarResponse>(`/api/car/${id}`);
+    const { data } = await axios.get<CarResponse>(`/api/car/${id}`, {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return data;
   };
 
   const deleteCar = async () => {
-    await axios.delete(`/api/car/${id}`);
+    await axios.delete(`/api/car/${id}`, {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
   };
 
   const deleteCarMutation = useMutation(deleteCar, {

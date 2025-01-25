@@ -1,6 +1,10 @@
-import { Car, CarFormField, CarSellerNoteFormField } from "@/types/car";
+import {
+  Car,
+  CarFormField,
+  CarLabel,
+  CarSellerNoteFormField,
+} from "@/types/car";
 import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
 
 const initialCar: Car = {
   title: "",
@@ -13,20 +17,20 @@ const initialCar: Car = {
   details: [],
 };
 
-export const CarLocalAtom = atomWithStorage<Car>("carLocal", initialCar);
+export const CarLocalAtom = atom<Car>(initialCar);
 
-export const CarFormFieldsAtom = atomWithStorage<CarFormField[]>(
-  "car_form_fields",
-  [],
-);
+export const CarFormFieldsAtom = atom<CarFormField[]>([]);
 
 export const CarFormFieldsEditAtom = atom<CarFormField[]>([]);
 
 export const CarSellerNotesAtom = atom<CarSellerNoteFormField[]>([]);
 export const CarEditSellerNotesAtom = atom<CarSellerNoteFormField[]>([]);
 
+export const CarLabelAtom = atom<CarLabel[]>([]);
+
 CarLocalAtom.debugLabel = "CarLocalAtom";
 CarFormFieldsAtom.debugLabel = "CarFormFieldsAtom";
 CarFormFieldsEditAtom.debugLabel = "CarFormFieldsEditAtom";
 CarSellerNotesAtom.debugLabel = "CarSellerNotesAtom";
 CarEditSellerNotesAtom.debugLabel = "CarEditSellerNotesAtom";
+CarLabelAtom.debugLabel = "CarLabelAtom";

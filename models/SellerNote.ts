@@ -16,7 +16,7 @@ const SellerNoteSchema = new Schema<SellerNoteDocument>({
   title: { type: String, required: true },
 });
 
-SellerNoteSchema.index({ title: 1 }, { unique: true });
+SellerNoteSchema.index({ title: 1 });
 
 SellerNoteSchema.pre("findOneAndDelete", async function (next) {
   try {

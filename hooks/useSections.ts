@@ -35,7 +35,14 @@ export const useSections = () => {
   };
 
   const getSections = async () => {
-    const response = await axios.get("/api/sections");
+    const response = await axios.get("/api/sections", {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return response.data;
   };
 
@@ -43,8 +50,8 @@ export const useSections = () => {
     CarSellerNoteFormField[],
     AxiosError<{ message: string }>
   >(["get-sections"], getSections, {
-    staleTime: 30 * 60 * 1000,
-    cacheTime: 30 * 60 * 1000,
+    staleTime: 0,
+    cacheTime: 0,
     refetchOnWindowFocus: false,
     refetchInterval: 30 * 60 * 1000,
     onSuccess: (data) => {

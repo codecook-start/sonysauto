@@ -7,10 +7,9 @@ export const createCarPipeline = (
   featuresFilter: string[] = [],
   sortStage: Record<string, 1 | -1> = { createdAt: -1 },
   skip: number = 0,
-  limit: number = 10,
+  limit: number = 32,
   carDetailOrderIds: Types.ObjectId[],
-  minPrice?: number,
-  maxPrice?: number,
+  carOrderIds: Types.ObjectId[],
 ): PipelineStage[] => {
   return [
     {
@@ -67,6 +66,14 @@ export const createCarPipeline = (
         localField: "sellerNotes.text",
         foreignField: "_id",
         as: "populatedTexts",
+      },
+    },
+    {
+      $lookup: {
+        from: "carlabels",
+        localField: "label",
+        foreignField: "_id",
+        as: "label",
       },
     },
     {
@@ -154,7 +161,11 @@ export const createCarPipeline = (
                   field: "match",
                   input: {
                     $regexFind: {
-                      input: "$$size.option.name",
+                      input: {
+                        $trim: {
+                          input: "$$size.option.name",
+                        },
+                      },
                       regex: "\\d+(\\.\\d+)?",
                     },
                   },
@@ -210,23 +221,19 @@ export const createCarPipeline = (
             },
             in: {
               $toDouble: {
-                $arrayElemAt: [
-                  {
-                    $split: [
-                      {
-                        $ltrim: {
-                          input: {
-                            $rtrim: {
-                              input: "$$weight.option.name",
-                            },
-                          },
+                $getField: {
+                  field: "match",
+                  input: {
+                    $regexFind: {
+                      input: {
+                        $trim: {
+                          input: "$$weight.option.name",
                         },
                       },
-                      " ",
-                    ],
+                      regex: "^\\d+(\\.\\d+)?",
+                    },
                   },
-                  0,
-                ],
+                },
               },
             },
           },
@@ -256,6 +263,11 @@ export const createCarPipeline = (
             },
           },
         },
+      },
+    },
+    {
+      $addFields: {
+        carOrder: { $indexOfArray: [carOrderIds, "$_id"] },
       },
     },
     {
@@ -313,49 +325,30 @@ export const createCarPipeline = (
           },
         ]
       : []),
-
     {
       $facet: {
-        cars: [
-          {
-            $match: {
-              numericPrice: {
-                $gte: minPrice || 0,
-                $lte: maxPrice || Infinity,
-              },
-            },
-          },
-          { $sort: sortStage },
-          { $skip: skip },
-          { $limit: limit },
-        ],
-        totalCars: [
-          {
-            $match: {
-              numericPrice: {
-                $gte: minPrice || 0,
-                $lte: maxPrice || Infinity,
-              },
-            },
-          },
-          { $count: "count" },
-        ],
-        priceRange: [
-          {
-            $group: {
-              _id: null,
-              min: { $min: "$numericPrice" },
-              max: { $max: "$numericPrice" },
-            },
-          },
-        ],
+        cars: [{ $sort: sortStage }, { $skip: skip }, { $limit: limit }],
+        totalCars: [{ $count: "count" }],
       },
     },
     {
       $project: {
-        cars: 1,
+        cars: {
+          $map: {
+            input: "$cars",
+            as: "car",
+            in: {
+              _id: "$$car._id",
+              title: "$$car.title",
+              price: "$$car.price",
+              images: "$$car.images",
+              details: "$$car.details",
+              pages: "$$car.pages",
+              label: { $arrayElemAt: ["$$car.label", 0] },
+            },
+          },
+        },
         totalCars: { $arrayElemAt: ["$totalCars.count", 0] },
-        priceRange: { $arrayElemAt: ["$priceRange", 0] },
       },
     },
   ];

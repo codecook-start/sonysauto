@@ -21,7 +21,14 @@ const useFeatures = () => {
   };
 
   const getFeatures = async () => {
-    const response = await axios.get("/api/features");
+    const response = await axios.get("/api/features", {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return response.data;
   };
 
@@ -43,12 +50,11 @@ const useFeatures = () => {
     ["get-features"],
     getFeatures,
     {
-      staleTime: 30 * 60 * 1000,
-      cacheTime: 30 * 60 * 1000,
+      staleTime: 0,
+      cacheTime: 0,
       refetchOnWindowFocus: false,
       refetchInterval: 30 * 60 * 1000,
       onSuccess: (data) => {
-        console.log("Data:", data);
         setFeatures((prev) =>
           data.map((f) => ({
             ...f,

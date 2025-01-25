@@ -53,7 +53,14 @@ export const useFilter = () => {
     if (pagination.maxPrice) {
       url += `&maxPrice=${pagination.maxPrice}`;
     }
-    const { data } = await axios.get<Filter[]>(url);
+    const { data } = await axios.get<Filter[]>(url, {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return data;
   };
 
@@ -80,7 +87,14 @@ export const useFilter = () => {
     if (pagination.maxPrice) {
       url += `&maxPrice=${pagination.maxPrice}`;
     }
-    const { data } = await axios.get<FilterValue[]>(url);
+    const { data } = await axios.get<FilterValue[]>(url, {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return data;
   };
 
@@ -107,7 +121,14 @@ export const useFilter = () => {
     if (pagination.maxPrice) {
       url += `&maxPrice=${pagination.maxPrice}`;
     }
-    const { data } = await axios.get<FilterValue[]>(url);
+    const { data } = await axios.get<FilterValue[]>(url, {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return data;
   };
 
@@ -134,7 +155,14 @@ export const useFilter = () => {
     if (pagination.maxPrice) {
       url += `&maxPrice=${pagination.maxPrice}`;
     }
-    const { data } = await axios.get<FilterValue[]>(url);
+    const { data } = await axios.get<FilterValue[]>(url, {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return data;
   };
 
@@ -161,7 +189,12 @@ export const useFilter = () => {
     if (pagination.maxPrice) {
       url += `&maxPrice=${pagination.maxPrice}`;
     }
-    const { data } = await axios.get<FilterValue[]>(url);
+    const { data } = await axios.get<FilterValue[]>(url, {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+      },
+    });
     return data;
   };
 
@@ -171,9 +204,14 @@ export const useFilter = () => {
     isError,
     refetch,
   } = useQuery<Filter[], AxiosError<{ message: string }>>(
-    ["filters", `filters-${pathname}`],
+    ["filters", pathname],
     fetchFilter,
     {
+      refetchInterval: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      staleTime: 0,
+      optimisticResults: true,
       onSuccess: (response) => {
         if (!response) return;
         setFilters(
@@ -195,9 +233,14 @@ export const useFilter = () => {
     isRefetching: isRefetchingMakes,
     refetch: refetchMakes,
   } = useQuery<FilterValue[], AxiosError<{ message: string }>>(
-    ["makes", `makes-${pathname}`],
+    ["makes", pathname],
     fetchMakes,
     {
+      refetchInterval: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      staleTime: 0,
+      optimisticResults: true,
       onSuccess: (response) => {
         if (!response) return;
         setMakes(response);
@@ -217,9 +260,14 @@ export const useFilter = () => {
     isRefetching: isRefetchingTypes,
     refetch: refetchTypes,
   } = useQuery<FilterValue[], AxiosError<{ message: string }>>(
-    ["types", `types-${pathname}`],
+    ["types", pathname],
     fetchTypes,
     {
+      refetchInterval: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      staleTime: 0,
+      optimisticResults: true,
       onSuccess: (response) => {
         if (!response) return;
         setTypes(response);
@@ -241,9 +289,14 @@ export const useFilter = () => {
     isRefetching: isRefetchingModels,
     refetch: refetchModels,
   } = useQuery<FilterValue[], AxiosError<{ message: string }>>(
-    ["models", `models-${pathname}`],
+    ["models", pathname],
     fetchModels,
     {
+      refetchInterval: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      staleTime: 0,
+      optimisticResults: true,
       onSuccess: (response) => {
         if (!response) return;
         setModels(response);
@@ -263,9 +316,14 @@ export const useFilter = () => {
     isRefetching: isRefetchingFeatures,
     refetch: refetchFeatures,
   } = useQuery<FilterValue[], AxiosError<{ message: string }>>(
-    ["features", `features-${pathname}`],
+    ["features", pathname],
     fetchFeatures,
     {
+      refetchInterval: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      staleTime: 0,
+      optimisticResults: true,
       onSuccess: (response) => {
         if (!response) return;
         setPagination((prev) => ({
@@ -313,6 +371,10 @@ export const useFilter = () => {
       isLoadingTypes ||
       isLoadingModels ||
       isLoadingFeatures,
+    isLoadingMakes,
+    isLoadingTypes,
+    isLoadingModels,
+    isLoadingFeatures,
     isRefetchingFilters,
     isRefetchingMakes,
     isRefetchingTypes,

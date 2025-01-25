@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils";
 import useEditSections from "@/hooks/useEditSections";
 import useEditParagraph from "@/hooks/useEditParagraph";
 import dynamic from "next/dynamic";
+import { useAtomValue } from "jotai";
+import { carAtom } from "@/jotai/carAtom";
 
 const QuillEditor = dynamic(() => import("@/components/QuillEditor"), {
   ssr: false,
@@ -54,16 +56,14 @@ const SortableParagraph = ({
     },
   } = useEditParagraph(noteId);
 
-  const handleCheckboxChange = () => {
+  const handleCheckboxChange = (isChecked: boolean) => {
     setSections((prev) =>
       prev.map((s) =>
         s._id === noteId
           ? {
               ...s,
               texts: s.texts?.map((p) =>
-                p._id === paragraph._id
-                  ? { ...p, checked: !paragraph.checked }
-                  : p,
+                p._id === paragraph._id ? { ...p, checked: isChecked } : p,
               ),
             }
           : s,
@@ -72,12 +72,21 @@ const SortableParagraph = ({
   };
 
   const handleLocalCheckboxChange = (isChecked: boolean) => {
-    updateParagraph({
-      _id: paragraph._id,
-      title: paragraphTitle,
-      text: paragraphText,
-      scope: isChecked ? "local" : "global",
-    });
+    handleCheckboxChange(true);
+    setSections((prev) =>
+      prev.map((s) =>
+        s._id === noteId
+          ? {
+              ...s,
+              texts: s.texts?.map((p) =>
+                p._id === paragraph._id
+                  ? { ...p, scope: isChecked ? "local" : "global" }
+                  : p,
+              ),
+            }
+          : s,
+      ),
+    );
   };
 
   const handleDeleteParagraph = () => {
@@ -89,7 +98,7 @@ const SortableParagraph = ({
       _id: paragraph._id,
       title: paragraphTitle,
       text: paragraphText,
-      scope: "global",
+      scope: paragraph.scope ?? "global",
     });
   };
 
@@ -128,12 +137,15 @@ const SortableParagraph = ({
               placeholder="Paragraph Title"
             />
           </header>
-          <div className="quill-editor-container">
-            <QuillEditor
-              value={paragraphText}
-              onChange={setParagraphText}
-              className="rounded-b-md"
-            />
+          <div
+            className={cn(
+              "quill-editor-container peer rounded-b-md border bg-gray-50",
+              {
+                "bg-red-50": paragraph.scope === "local",
+              },
+            )}
+          >
+            <QuillEditor value={paragraphText} onChange={setParagraphText} />
           </div>
         </div>
         <div className="mt-auto flex flex-col items-center gap-2">
@@ -145,33 +157,33 @@ const SortableParagraph = ({
             />
             <Label className="font-medium text-gray-600">Local</Label>
           </div>
-          <Button
-            size="sm"
-            onClick={handleUpdateParagraph}
-            disabled={isUpdatingParagraph}
-            className="flex items-center gap-2"
-          >
-            {isUpdatingParagraph ? (
-              <Loader size={16} className="animate-spin text-green-500" />
-            ) : (
-              <Save size={16} color="green" />
-            )}
-            <span>Save</span>
-          </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleDeleteParagraph}
-            disabled={isDeletingParagraph}
-            className="flex items-center gap-2"
-          >
-            {isDeletingParagraph ? (
-              <Loader size={16} className="animate-spin text-red-500" />
-            ) : (
-              <Trash size={16} />
-            )}
-            <span>Delete</span>
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={handleUpdateParagraph}
+              disabled={isUpdatingParagraph}
+              className="flex items-center gap-2"
+            >
+              {isUpdatingParagraph ? (
+                <Loader size={16} className="animate-spin text-green-500" />
+              ) : (
+                <Save size={16} color="green" />
+              )}
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleDeleteParagraph}
+              disabled={isDeletingParagraph}
+              className="flex items-center gap-2"
+            >
+              {isDeletingParagraph ? (
+                <Loader size={16} className="animate-spin" />
+              ) : (
+                <Trash size={16} />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -181,6 +193,7 @@ const SortableParagraph = ({
 const SortableSection = ({ section }: { section: CarSellerNoteFormField }) => {
   const [editMode, setEditMode] = useState(false);
   const [sectionTitle, setSectionTitle] = useState(section.title);
+  const car = useAtomValue(carAtom);
   const {
     setSections,
     updateSection: { mutate: updateSection, isLoading: isUpdatingSection },
@@ -248,6 +261,19 @@ const SortableSection = ({ section }: { section: CarSellerNoteFormField }) => {
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
+
+  const carSection = car?.sellerNotes?.find((s) => s.note?._id === section._id);
+
+  const filteredParagraphs = section.texts?.filter((p) => {
+    if (p.scope === "local") {
+      if (!p.used) {
+        return true;
+      } else {
+        return !!carSection?.texts.find((t) => t._id === p._id);
+      }
+    }
+    return true;
+  });
 
   return (
     <div
@@ -334,16 +360,16 @@ const SortableSection = ({ section }: { section: CarSellerNoteFormField }) => {
       </div>
 
       <div className="space-y-2">
-        {section.texts && (
+        {filteredParagraphs && (
           <DndContext
             collisionDetection={closestCenter}
             onDragEnd={handleParagraphDragEnd}
           >
             <SortableContext
-              items={section.texts.map((t) => t._id)}
+              items={filteredParagraphs.map((t) => t._id)}
               strategy={verticalListSortingStrategy}
             >
-              {section.texts.map((paragraph) => (
+              {filteredParagraphs.map((paragraph) => (
                 <SortableParagraph
                   key={paragraph._id}
                   paragraph={paragraph}

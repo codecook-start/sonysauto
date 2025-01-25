@@ -22,7 +22,7 @@ const CarDetailOptionSchema = new Schema<CarDetailOptionDocument>({
   icon: { type: String, nullable: true },
 });
 
-CarDetailOptionSchema.index({ name: 1, detailId: 1 }, { unique: true });
+CarDetailOptionSchema.index({ name: 1, detailId: 1 });
 
 CarDetailOptionSchema.pre("findOneAndDelete", async function (next) {
   try {

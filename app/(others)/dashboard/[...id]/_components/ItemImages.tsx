@@ -64,12 +64,16 @@ const SortableThumbnail: React.FC<{
           src={"/" + image.path}
           alt={image.path}
           className="h-20 w-full object-cover"
+          loading="lazy"
+          fetchPriority="low"
         />
       ) : (
         <img
           src={image.url}
           alt={image.file!.name}
           className="h-20 w-full object-cover"
+          loading="lazy"
+          fetchPriority="low"
         />
       )}
       <Button
@@ -177,6 +181,8 @@ const ItemImages = () => {
                 src={currImage}
                 alt={`carousel-image-${selectedIndex}`}
                 className="h-full w-full object-cover"
+                loading="lazy"
+                fetchPriority="low"
               />
             ) : (
               <div className="flex flex-col items-center justify-center space-y-2">

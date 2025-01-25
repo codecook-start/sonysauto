@@ -28,6 +28,8 @@ const CarFeatures = () => {
                   src={"/" + feature.icon}
                   className="size-5 object-cover"
                   alt={feature.name}
+                  loading="lazy"
+                  fetchPriority="low"
                 />
               )}
             </span>

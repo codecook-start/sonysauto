@@ -32,7 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         id="root"
-        className={`bg-white bg-[url('/bg.jpg')] bg-contain antialiased ${openSans.className} ${harkshock.variable}`}
+        className={`bg-black bg-[url('/bg.jpg')] bg-contain antialiased ${openSans.className} ${harkshock.variable}`}
       >
         <JotaiProvider>
           <ReactQueryProvider>

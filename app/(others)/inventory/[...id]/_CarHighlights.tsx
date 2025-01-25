@@ -61,6 +61,8 @@ const CarHighlights = () => {
                 alt=""
                 key={index}
                 className="mx-1 h-64 w-full rounded object-cover"
+                loading="lazy"
+                fetchPriority="low"
               />
             ))}
           </div>

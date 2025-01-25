@@ -18,7 +18,7 @@ const featureSchema = new Schema<IFeature>({
   icon: { type: String, default: null },
 });
 
-featureSchema.index({ name: 1 }, { unique: true });
+featureSchema.index({ name: 1 });
 
 featureSchema.pre("findOneAndDelete", async function (next) {
   try {

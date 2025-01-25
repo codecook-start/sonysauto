@@ -23,7 +23,7 @@ type SellerNote = {
 
 type Detail = {
   detail: Types.ObjectId;
-  option: Types.ObjectId;
+  option: Types.ObjectId | null;
 };
 
 type ICar = Document & {
@@ -35,6 +35,7 @@ type ICar = Document & {
   sellerNotes: SellerNote[];
   extra?: string;
   images: Image[];
+  label: Types.ObjectId | null;
   domain: string[];
   pages: string[];
   createdAt: Date;
@@ -86,6 +87,11 @@ const CarSchema = new Schema<ICar>(
         path: { type: String, required: true },
       },
     ],
+    label: {
+      type: Schema.Types.ObjectId,
+      ref: "CarLabel",
+      default: null,
+    },
     domain: {
       type: [String],
       default: ["sonysauto.net", "sonysauto.com"],

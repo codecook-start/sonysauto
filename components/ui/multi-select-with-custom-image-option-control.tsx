@@ -218,6 +218,8 @@ export const MultiSelectWithCustomImageOptionControl = React.forwardRef<
             onError={(e) => {
               (e.target as HTMLImageElement).src = "";
             }}
+            loading="lazy"
+            fetchPriority="low"
           />
           <input
             type="file"

@@ -71,6 +71,8 @@ const CarCard = ({ car }: { car: CarResponse }) => (
           src={car.images[0].path}
           alt={car.title}
           className="h-full w-full object-cover transition-transform hover:scale-105"
+          loading="lazy"
+          fetchPriority="low"
         />
       </div>
       <h4 className="mt-3 text-lg font-semibold">{car.title}</h4>

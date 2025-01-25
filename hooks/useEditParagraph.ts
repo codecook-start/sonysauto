@@ -11,6 +11,7 @@ const useEditParagraph = (noteId: string) => {
 
   const createParagraph = async ({
     text,
+    title,
     scope,
   }: {
     title: string;
@@ -19,6 +20,7 @@ const useEditParagraph = (noteId: string) => {
   }) => {
     const response = await axios.post("/api/sections/texts", {
       noteId,
+      title,
       text,
       scope,
     });
@@ -58,7 +60,20 @@ const useEditParagraph = (noteId: string) => {
     { title: string; text: string; scope: string }
   >(createParagraph, {
     onSuccess: async () => {
+      await queryClient.invalidateQueries("get-sections");
       await queryClient.invalidateQueries("get-sections-edit");
+      // setSections((prev) =>
+      //   prev.map((s) =>
+      //     s._id === noteId
+      //       ? {
+      //           ...s,
+      //           texts: s.texts?.map((p) =>
+      //             p._id === data._id ? { ...p, scope: "local" } : p,
+      //           ),
+      //         }
+      //       : s,
+      //   ),
+      // );
     },
     onError: (error) => {
       console.error("Error creating paragraph:", error);
@@ -74,7 +89,8 @@ const useEditParagraph = (noteId: string) => {
     AxiosError<{ message: string }>,
     { _id: string; title: string; text: string; scope: string }
   >(updateParagraph, {
-    onSuccess: async () => {
+    async onSuccess() {
+      await queryClient.invalidateQueries("get-sections");
       await queryClient.invalidateQueries("get-sections-edit");
     },
     onError: (error) => {

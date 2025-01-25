@@ -5,6 +5,7 @@ import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function POST(req: NextRequest) {
   try {
@@ -56,9 +57,11 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     await connectToDatabase();
+    const url = new URL(request.url);
+    const global = url.searchParams.get("global") === "true";
     const ordering = await Ordering.findOne({
       name: "SellerNote",
     });
@@ -77,22 +80,27 @@ export async function GET() {
           as: "texts",
         },
       },
-      {
-        $addFields: {
-          texts: {
-            $filter: {
-              input: "$texts",
-              as: "text",
-              cond: { $eq: ["$$text.scope", "global"] },
+      ...(global
+        ? [
+            {
+              $addFields: {
+                texts: {
+                  $filter: {
+                    input: "$texts",
+                    as: "text",
+                    cond: { $eq: ["$$text.scope", "global"] },
+                  },
+                },
+              },
             },
-          },
-        },
-      },
+          ]
+        : []),
       {
         $project: {
           _id: 1,
           title: 1,
           texts: 1,
+          used: 1,
         },
       },
       {

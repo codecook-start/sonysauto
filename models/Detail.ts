@@ -21,7 +21,7 @@ const carDetailSchema = new Schema<CarDetailDocument>({
   icon: { type: String, nullable: true },
 });
 
-carDetailSchema.index({ name: 1 }, { unique: true });
+carDetailSchema.index({ name: 1 });
 
 carDetailSchema.pre("findOneAndDelete", async function (next) {
   try {

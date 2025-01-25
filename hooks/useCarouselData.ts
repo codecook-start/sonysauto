@@ -19,14 +19,25 @@ export const useCarouselData = (title: string) => {
   };
 
   const saveCarouselData = async (data: any[]): Promise<void> => {
-    await axios.post("/api/carousel", { title, data });
+    await axios.post(
+      "/api/carousel",
+      { title, data },
+      {
+        headers: {
+          "Cache-Control": "no-cache",
+          cache: "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      },
+    );
   };
 
   const query = useQuery<CarouselData, Error>({
     queryKey: ["carousel", title],
     queryFn: fetchCarouselData,
-    staleTime: 5 * 60 * 1000,
-    cacheTime: 5 * 60 * 1000,
+    staleTime: 0,
+    cacheTime: 0,
     refetchOnWindowFocus: false,
     refetchInterval: 5 * 60 * 1000,
     retry: false,
@@ -43,20 +54,7 @@ export const useCarouselData = (title: string) => {
   });
 
   return {
-    carouselData: query.data?.data || [
-      "/1.jpg",
-      "/2.jpg",
-      "/3.jpg",
-      "/4.jpg",
-      "/1.jpg",
-      "/2.jpg",
-      "/3.jpg",
-      "/4.jpg",
-      "/1.jpg",
-      "/2.jpg",
-      "/3.jpg",
-      "/4.jpg",
-    ],
+    carouselData: query.data?.data,
     isLoading: query.isLoading,
     isError: query.isError,
     error: query.error,

@@ -7,11 +7,30 @@ const useDashboard = (title: string) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const saveJSON = async (data: any[]): Promise<void> => {
-    await axios.post("/api/save-json", { title, data });
+    await axios.post(
+      "/api/save-json",
+      { title, data },
+      {
+        headers: {
+          "Cache-Control": "no-cache",
+          cache: "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      },
+    );
   };
   const fetchJSON = async (): Promise<any> => {
     const response = await axios.get(
       `/api/save-json?title=${encodeURIComponent(title)}`,
+      {
+        headers: {
+          "Cache-Control": "no-cache",
+          cache: "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      },
     );
     return response.data;
   };
@@ -19,8 +38,8 @@ const useDashboard = (title: string) => {
   const query = useQuery<any, AxiosError<{ message: string }>, any>({
     queryKey: ["save-json", title],
     queryFn: fetchJSON,
-    staleTime: 5 * 10 * 60 * 1000,
-    cacheTime: 5 * 10 * 60 * 1000,
+    staleTime: 0,
+    cacheTime: 0,
     refetchOnWindowFocus: false,
     refetchInterval: 5 * 10 * 60 * 1000,
     onSuccess(data) {

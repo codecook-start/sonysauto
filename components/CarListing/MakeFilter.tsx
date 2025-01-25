@@ -17,12 +17,11 @@ const MakeFilter = () => {
     refetch: refetchFilters,
     refetchModels,
     refetchFeatures,
-    isLoading,
+    isLoadingMakes,
     isRefetchingMakes,
   } = useFilter();
   const { refetch } = useCars();
-
-  if (isRefetchingMakes || (isLoading && (!makes || !makes.length)))
+  if (isRefetchingMakes || isLoadingMakes)
     return <Loader style={{}} className="h-40" />;
 
   if (!makes || !makes.length) return null;
@@ -52,11 +51,13 @@ const MakeFilter = () => {
     await handleFilterChange("type", []);
     await handleFilterChange("model", []);
     await delay(10);
-    await refetchTypes();
-    await refetchModels();
-    await refetchFilters();
-    await refetchFeatures();
-    await refetch();
+    await Promise.all([
+      refetchModels(),
+      refetchTypes(),
+      refetchFilters(),
+      refetchFeatures(),
+      refetch(),
+    ]);
   };
 
   const isMakeSelected = (makeName: string) => {
@@ -95,6 +96,7 @@ const MakeFilter = () => {
                       alt={`${make.name} logo`}
                       className="h-full w-full object-contain"
                       loading="lazy"
+                      fetchPriority="low"
                     />
                   </div>
                 )}

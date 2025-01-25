@@ -6,6 +6,7 @@ import { Car } from "@/models/Car";
 import { createCarPipelineRaw } from "@/pipeline/rawfilterCars";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const filterableDetails = [
   "condition",

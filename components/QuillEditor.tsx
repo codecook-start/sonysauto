@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Quill from "quill";
-import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
 
 type QuillEditorProps = {
   value: string;
@@ -19,7 +19,21 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   useEffect(() => {
     if (editorRef.current && !quillInstance.current) {
       quillInstance.current = new Quill(editorRef.current, {
-        theme: "snow",
+        placeholder: "Write something...",
+        theme: "bubble",
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, 3, false] }], // Headers
+            ["bold", "italic", "underline", "strike"], // Text styles
+            [{ color: [] }, { background: [] }], // Text color and background
+            [{ script: "sub" }, { script: "super" }], // Subscript / Superscript
+            ["blockquote", "code-block"], // Blockquote and code
+            [{ list: "ordered" }, { list: "bullet" }], // Lists
+            [{ align: [] }], // Text alignment
+            ["link", "image", "video"], // Links, images, and videos
+            ["clean"], // Remove formatting
+          ],
+        },
       });
 
       quillInstance.current.on("text-change", () => {

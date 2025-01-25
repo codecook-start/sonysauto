@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "react-query";
 import { carAtom } from "@/jotai/carAtom";
 import { SellerNote, Text } from "@/types/car";
 import useOrdering from "@/hooks/useOrdering";
+import { usePathname } from "next/navigation";
 
 type SectionResponse = {
   _id: string;
@@ -20,6 +21,7 @@ const useEditSections = () => {
   } = useOrdering("SellerNote");
   const [sections, setSections] = useAtom(CarEditSellerNotesAtom);
   const car = useAtomValue(carAtom);
+  const pathname = usePathname();
 
   const createSection = async (title: string) => {
     const response = await axios.post("/api/sections", { title });
@@ -43,23 +45,30 @@ const useEditSections = () => {
   };
 
   const getSections = async () => {
-    const response = await axios.get("/api/sections");
+    const response = await axios.get("/api/sections", {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return response.data;
   };
 
   const getSectionsQuery = useQuery<
     SectionResponse[],
     AxiosError<{ message: string }>
-  >(["get-sections-edit"], getSections, {
-    staleTime: 30 * 60 * 1000,
-    cacheTime: 30 * 60 * 1000,
+  >(["get-sections-edit", pathname], getSections, {
+    staleTime: 0,
+    cacheTime: 0,
     refetchOnWindowFocus: false,
     refetchInterval: 30 * 60 * 1000,
     onSuccess: (data) => {
       setSections((prev) => {
         return data.map((section) => {
           const existingSection = car?.sellerNotes?.find(
-            (cs) => cs.note._id === section._id,
+            (cs) => cs.note?._id === section._id,
           ) as SellerNote;
           const prevSection = prev.find((ps) => ps._id === section._id);
           if (prevSection) {

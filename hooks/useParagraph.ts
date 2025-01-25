@@ -13,11 +13,13 @@ const useParagraph = (noteId?: string) => {
     title,
     text,
     scope,
+    used,
   }: {
     id?: string;
     title: string;
     text: string;
     scope: string;
+    used?: boolean;
   }) => {
     const sectionId = noteId || id;
     const response = await axios.post("/api/sections/texts", {
@@ -25,6 +27,7 @@ const useParagraph = (noteId?: string) => {
       title,
       text,
       scope,
+      used,
     });
     return response.data;
   };
@@ -34,17 +37,20 @@ const useParagraph = (noteId?: string) => {
     title,
     text,
     scope,
+    used,
   }: {
     _id: string;
     title: string;
     text: string;
     scope: string;
+    used?: boolean;
   }) => {
     const response = await axios.put("/api/sections/texts", {
       _id,
       title,
       text,
       scope,
+      used,
     });
     return response.data;
   };
@@ -72,10 +78,24 @@ const useParagraph = (noteId?: string) => {
       title: string;
       text: string;
       scope: string;
+      used?: boolean;
     }
   >(createParagraph, {
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await queryClient.invalidateQueries("get-sections");
+      await queryClient.invalidateQueries("get-sections-edit");
+      setSections((prev) =>
+        prev.map((s) =>
+          s._id === noteId
+            ? {
+                ...s,
+                texts: s.texts?.map((p) =>
+                  p._id === data._id ? { ...p, scope: "local" } : p,
+                ),
+              }
+            : s,
+        ),
+      );
     },
     onError: (error) => {
       console.error("Error creating paragraph:", error);
@@ -92,6 +112,7 @@ const useParagraph = (noteId?: string) => {
       title: string;
       text: string;
       scope: string;
+      used?: boolean;
     },
     AxiosError<{ message: string }>,
     {
@@ -99,6 +120,7 @@ const useParagraph = (noteId?: string) => {
       title: string;
       text: string;
       scope: string;
+      used?: boolean;
     }
   >(updateParagraph, {
     onSuccess: async () => {

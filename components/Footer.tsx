@@ -17,6 +17,8 @@ const Footer = () => {
                 style={{
                   width: "12rem",
                 }}
+                loading="lazy"
+                fetchPriority="low"
               />
             }
           </div>

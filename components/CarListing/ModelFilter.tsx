@@ -16,7 +16,7 @@ const ModelFilter = () => {
     refetchMakes,
     refetchTypes,
     refetchFeatures,
-    isLoading,
+    isLoadingModels,
     isRefetchingModels,
   } = useFilter();
 
@@ -49,15 +49,15 @@ const ModelFilter = () => {
       : [...currentValues, modelName];
     await handleFilterChange("model", newValues);
     await Promise.all([
-      refetchFilters(),
       refetchTypes(),
+      refetchFilters(),
       refetchFeatures(),
       refetchMakes(),
       refetch(),
     ]);
   };
 
-  if (isRefetchingModels || (isLoading && (!models || !models.length)))
+  if (isRefetchingModels || isLoadingModels)
     return <Loader style={{}} className="h-40" />;
 
   if (!models || !models.length) return null;
@@ -93,6 +93,7 @@ const ModelFilter = () => {
                     alt={`${model.name} icon`}
                     className="h-full w-full object-contain"
                     loading="lazy"
+                    fetchPriority="low"
                   />
                 </div>
               )}

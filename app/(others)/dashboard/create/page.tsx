@@ -21,10 +21,13 @@ import { CarLocalAtom } from "@/jotai/dashboardAtom";
 import useSubmitCar from "@/hooks/useSubmitCar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MultiSelectWithCustom } from "@/components/ui/multi-select-with-custom";
+import CarLabel from "./_components/CarLabel";
+import { SparklesIcon } from "lucide-react";
 
 const Dashboard = () => {
   const [car, setCar] = useAtom(CarLocalAtom);
-  const { handleSubmit, isLoading } = useSubmitCar();
+  const { handleSubmit, isLoading, generateTitle } = useSubmitCar();
+
   return (
     <div className="mb-8">
       {/* Add Car banner */}
@@ -54,15 +57,24 @@ const Dashboard = () => {
         {/* merge title and price */}
         <div className="container-md mt-8 flex gap-4">
           {/* title */}
-          <div className="flex-1">
+          <div className="flex-1 space-y-4">
             <Label>Listing Title</Label>
-            <Input
-              value={car?.title}
-              onChange={(e) => setCar({ ...car, title: e.target.value })}
-              type="text"
-              placeholder="title"
-              className="my-4 w-full border p-4"
-            />
+            <div className="flex rounded border">
+              <input
+                type="text"
+                value={car?.title}
+                onChange={(e) => setCar({ ...car, title: e.target.value })}
+                placeholder="Title"
+                className="mx-4 flex-1 text-sm outline-none"
+              />
+              <Button
+                onClick={generateTitle}
+                variant="ghost"
+                className="rounded text-neutral-500"
+              >
+                <SparklesIcon size={"1.25em"} />
+              </Button>
+            </div>
           </div>
           {/* price */}
           <div className="flex-1">
@@ -136,10 +148,6 @@ const Dashboard = () => {
                 value: "cayman",
               },
               {
-                label: "Reserved",
-                value: "reserved",
-              },
-              {
                 label: "Sold",
                 value: "sold",
               },
@@ -158,6 +166,8 @@ const Dashboard = () => {
             animation={0}
           />
         </div>
+        {/* label */}
+        <CarLabel />
         {/* extra field */}
         <div className="container-md mt-8">
           <Label>Extra Fields</Label>

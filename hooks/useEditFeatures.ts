@@ -6,6 +6,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { featuresEditAtom } from "@/jotai/featuresAtom";
 import { carAtom } from "@/jotai/carAtom";
 import useOrdering from "@/hooks/useOrdering";
+import { usePathname } from "next/navigation";
 
 const useEditFeatures = () => {
   const { toast } = useToast();
@@ -14,6 +15,7 @@ const useEditFeatures = () => {
   } = useOrdering("Feature");
   const [features, setFeatures] = useAtom(featuresEditAtom);
   const car = useAtomValue(carAtom);
+  const pathname = usePathname();
 
   const createFeature = async (formData: FormData) => {
     const response = await axios.post("/api/features", formData, {
@@ -23,7 +25,14 @@ const useEditFeatures = () => {
   };
 
   const getFeatures = async () => {
-    const response = await axios.get("/api/features");
+    const response = await axios.get("/api/features", {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return response.data;
   };
 
@@ -42,11 +51,11 @@ const useEditFeatures = () => {
   };
 
   const getFeaturesQuery = useQuery<Feature[], AxiosError<{ message: string }>>(
-    ["get-features", car?._id],
+    ["get-features", car?._id, pathname],
     getFeatures,
     {
-      staleTime: 30 * 60 * 1000,
-      cacheTime: 30 * 60 * 1000,
+      staleTime: 0,
+      cacheTime: 0,
       refetchOnWindowFocus: false,
       refetchInterval: 30 * 60 * 1000,
       onSuccess: (data) => {

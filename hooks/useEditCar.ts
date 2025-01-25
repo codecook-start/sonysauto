@@ -10,12 +10,26 @@ export const useEditCar = (id: string) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const fetchCar = async () => {
-    const { data } = await axios.get<CarResponse>(`/api/car/${id}`);
+    const { data } = await axios.get<CarResponse>(`/api/car/${id}`, {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return data;
   };
 
   const deleteCar = async () => {
-    await axios.delete(`/api/car/${id}`);
+    await axios.delete(`/api/car/${id}`, {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
   };
 
   const deleteCarMutation = useMutation(deleteCar, {
@@ -33,8 +47,8 @@ export const useEditCar = (id: string) => {
     ["car", id],
     fetchCar,
     {
-      staleTime: 5 * 60 * 1000,
-      cacheTime: 5 * 60 * 1000,
+      staleTime: 0,
+      cacheTime: 0,
       refetchOnWindowFocus: false,
       refetchInterval: 5 * 60 * 1000,
       onSuccess: (response) => {

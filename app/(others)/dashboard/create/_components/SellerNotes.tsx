@@ -111,15 +111,15 @@ const SortableParagraph = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="flex flex-col gap-4 rounded border border-gray-200 px-4 py-2 shadow-sm"
+      className="flex flex-col gap-4 rounded border border-gray-200 p-2 shadow-sm"
     >
-      <div className="flex items-center gap-4">
-        <div {...attributes} {...listeners} className="cursor-move">
-          <GripVertical className="h-5 w-5 text-gray-500" />
-        </div>
+      <div className="flex items-center gap-2">
         <div className="flex-1">
           <header className="flex gap-3 rounded-md rounded-b-none border border-b-0 border-gray-300 p-1 pl-4">
             <div className="flex items-center gap-2">
+              <div {...attributes} {...listeners} className="cursor-move">
+                <GripVertical className="h-5 w-5 text-gray-500" />
+              </div>
               <Checkbox
                 id={`paragraph-${paragraph._id}`}
                 checked={paragraph.checked}
@@ -136,12 +136,15 @@ const SortableParagraph = ({
               placeholder="Paragraph Title"
             />
           </header>
-          <div className="quill-editor-container">
-            <QuillEditor
-              value={paragraphText}
-              onChange={setParagraphText}
-              className="rounded-b-md"
-            />
+          <div
+            className={cn(
+              "quill-editor-container peer rounded-b-md border bg-gray-50",
+              {
+                "bg-red-50": paragraph.scope === "local",
+              },
+            )}
+          >
+            <QuillEditor value={paragraphText} onChange={setParagraphText} />
           </div>
         </div>
         <div className="mt-auto flex flex-col gap-2">
@@ -153,33 +156,33 @@ const SortableParagraph = ({
             />
             <Label className="font-medium text-gray-600">Local</Label>
           </div>
-          <Button
-            size="sm"
-            onClick={handleUpdateParagraph}
-            disabled={isUpdatingParagraph}
-            className="flex items-center gap-2"
-          >
-            {isUpdatingParagraph ? (
-              <Loader size={16} className="animate-spin text-green-500" />
-            ) : (
-              <Save size={16} color="green" />
-            )}
-            <span>Save</span>
-          </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleDeleteParagraph}
-            disabled={isDeletingParagraph}
-            className="flex items-center gap-2"
-          >
-            {isDeletingParagraph ? (
-              <Loader size={16} className="animate-spin" />
-            ) : (
-              <Trash size={16} />
-            )}
-            <span>Delete</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={handleUpdateParagraph}
+              disabled={isUpdatingParagraph}
+              className="flex items-center gap-2"
+            >
+              {isUpdatingParagraph ? (
+                <Loader size={16} className="animate-spin text-green-500" />
+              ) : (
+                <Save size={16} color="green" />
+              )}
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleDeleteParagraph}
+              disabled={isDeletingParagraph}
+              className="flex items-center gap-2"
+            >
+              {isDeletingParagraph ? (
+                <Loader size={16} className="animate-spin" />
+              ) : (
+                <Trash size={16} />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

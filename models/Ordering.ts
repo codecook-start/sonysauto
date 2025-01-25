@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Schema, model, models, Document, Model, Types } from "mongoose";
 
-export interface IOrdering extends Document {
-  name: "CarDetail" | "Feature" | "SellerNote";
+export type IOrdering = Document & {
+  name: "CarDetail" | "Feature" | "SellerNote" | "Car";
+  page: string;
   ids: Types.ObjectId[];
-}
+};
 
 const OrderingSchema = new Schema<IOrdering>({
   name: {
     type: String,
     required: true,
-    enum: ["CarDetail", "Feature", "SellerNote"],
+    enum: ["CarDetail", "Feature", "SellerNote", "Car"],
+  },
+  page: {
+    type: String,
   },
   ids: [
     {
@@ -20,7 +24,7 @@ const OrderingSchema = new Schema<IOrdering>({
   ],
 });
 
-OrderingSchema.index({ name: 1 }, { unique: true });
+OrderingSchema.index({ name: 1, page: 1 });
 
 export const Ordering: Model<IOrdering> =
   models.Ordering || model<IOrdering>("Ordering", OrderingSchema);

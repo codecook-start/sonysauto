@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import {
   CarEditSellerNotesAtom,
   CarFormFieldsEditAtom,
@@ -14,6 +14,7 @@ import { isDropdown } from "@/lib/utils";
 import useOptions from "@/hooks/useOptions";
 import { carAtom } from "@/jotai/carAtom";
 import { imagesEditAtom } from "@/jotai/imagesAtom";
+import useParagraph from "./useParagraph";
 
 const updateCarData = async (carData: FormData) => {
   const response = await axios.put(`/api/car/${carData.get("id")}`, carData, {
@@ -23,19 +24,61 @@ const updateCarData = async (carData: FormData) => {
 };
 
 const useUpdateCar = () => {
-  const car = useAtomValue(carAtom);
+  const [car, setCar] = useAtom(carAtom);
   const images = useAtomValue(imagesEditAtom);
   const carFormFields = useAtomValue(CarFormFieldsEditAtom);
   const features = useAtomValue(featuresEditAtom);
-  const sellerNotes = useAtomValue(CarEditSellerNotesAtom);
+  const [sellerNotes, setSellerNotes] = useAtom(CarEditSellerNotesAtom);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const {
     addOption: { mutateAsync: addCarDetailOption },
   } = useOptions();
+  const {
+    updateParagraph: { mutateAsync: updateParagraph },
+  } = useParagraph();
+
+  const generateTitle = useCallback(() => {
+    if (!carFormFields) return;
+
+    const fieldValues = carFormFields.reduce<Record<string, string>>(
+      (acc, field) => {
+        acc[field.name.toLowerCase()] = field.selectedValues?.[0]?.name || "";
+        return acc;
+      },
+      {},
+    );
+
+    const { year, make, model, fuel, seats } = fieldValues;
+
+    const title = [
+      year,
+      make,
+      model,
+      fuel.toLowerCase() === "hybrid" ? "Hybrid" : "",
+      seats && +seats > 5 ? `${seats} seats` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    setCar({ ...car, title });
+  }, [car, carFormFields, setCar]);
 
   const handleUpdate = useCallback(async () => {
     if (!car?._id) return;
+
+    if (!car.pages || !car.pages.length) {
+      toast({
+        title: "Error",
+        description: "Please add at least one page",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!car.title) {
+      generateTitle();
+    }
 
     const formData = new FormData();
     formData.append("id", car._id);
@@ -78,14 +121,31 @@ const useUpdateCar = () => {
       .map((feature) => feature._id);
     formData.append("features", JSON.stringify(selectedFeatures));
 
-    const sections = sellerNotes
-      .filter((note) => note.checked && note.texts?.length)
-      .map((note) => ({
-        note: note._id,
-        texts: (note.texts ?? [])
-          .filter((t) => t.checked)
-          .map((text) => text._id),
-      }));
+    const sections = await Promise.all(
+      sellerNotes
+        .filter((note) => note.checked && note.texts?.length)
+        .map(async (note) => ({
+          note: note._id,
+          texts: await Promise.all(
+            (note.texts ?? [])
+              .filter((t) => t.checked)
+              .map(async (text) => {
+                if (text.scope === "local" && !text.used) {
+                  const newText = await updateParagraph({
+                    _id: text._id,
+                    title: text.title,
+                    text: text.text,
+                    scope: text.scope,
+                    used: true,
+                  });
+                  return newText._id;
+                }
+                return text._id;
+              }),
+          ),
+        })),
+    );
+
     formData.append("sellerNotes", JSON.stringify(sections));
 
     if (car.videos) formData.append("videos", JSON.stringify(car.videos));
@@ -98,26 +158,38 @@ const useUpdateCar = () => {
       return;
     }
     if (car.pages) formData.append("pages", JSON.stringify(car.pages));
+    if (car.label) formData.append("label", car.label._id);
 
     console.log("FormData Prepared:", Object.fromEntries(formData.entries()));
     return updateCarData(formData);
   }, [
-    addCarDetailOption,
-    car,
+    car?._id,
+    car?.pages,
+    car?.title,
+    car?.price,
+    car?.extra,
+    car?.videos,
+    car?.label,
+    images,
     carFormFields,
     features,
     sellerNotes,
-    images,
     toast,
+    generateTitle,
+    addCarDetailOption,
+    updateParagraph,
   ]);
 
   const mutation = useMutation(handleUpdate, {
     onSuccess: async (data) => {
+      setSellerNotes([]);
+      setCar(null);
       await queryClient.invalidateQueries("cars");
       await queryClient.invalidateQueries("car");
       await queryClient.invalidateQueries("get-features");
       await queryClient.invalidateQueries("get-details");
       await queryClient.invalidateQueries("get-sections");
+      await queryClient.invalidateQueries("get-sections-edit");
       console.log("Car updated successfully:", data);
       toast({ title: "Car updated successfully" });
     },
@@ -131,7 +203,11 @@ const useUpdateCar = () => {
     },
   });
 
-  return { handleUpdate: mutation.mutate, isLoading: mutation.isLoading };
+  return {
+    handleUpdate: mutation.mutate,
+    isLoading: mutation.isLoading,
+    generateTitle,
+  };
 };
 
 export default useUpdateCar;

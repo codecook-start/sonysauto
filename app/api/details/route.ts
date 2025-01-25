@@ -8,6 +8,7 @@ import { Ordering } from "@/models/Ordering";
 import { Types } from "mongoose";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const uploadDir = path.join(process.cwd(), "public", "uploads");
 

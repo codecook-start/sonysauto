@@ -7,6 +7,7 @@ import { Ordering } from "@/models/Ordering";
 import { Types } from "mongoose";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const uploadDir = path.join(process.cwd(), "public", "uploads");
 
@@ -156,13 +157,13 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(
       { message: "Feature updated successfully", feature },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error updating feature:", error);
     return NextResponse.json(
       { error: (error as Error).message || "Failed to update feature" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

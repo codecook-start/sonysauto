@@ -201,6 +201,8 @@ const SortableItem: React.FC<{ field: CarFormField }> = ({ field }) => {
               <img
                 src={"/" + field.icon}
                 alt="field"
+                loading="lazy"
+                fetchPriority="low"
                 className={cn(
                   "h-10 w-10 cursor-pointer rounded-full object-contain object-center",
                   {

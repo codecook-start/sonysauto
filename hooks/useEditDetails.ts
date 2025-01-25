@@ -7,6 +7,7 @@ import { useToast } from "./use-toast";
 import { CarFormField } from "@/types/car";
 import { carAtom } from "@/jotai/carAtom";
 import useOrdering from "@/hooks/useOrdering";
+import { usePathname } from "next/navigation";
 
 export const useEditDetails = () => {
   const { toast } = useToast();
@@ -15,9 +16,17 @@ export const useEditDetails = () => {
   } = useOrdering("CarDetail");
   const [carFormFields, setCarFormFields] = useAtom(CarFormFieldsEditAtom);
   const car = useAtomValue(carAtom);
+  const pathname = usePathname();
 
   const getDetails = async (): Promise<CarFormField[]> => {
-    const response = await axios.get("/api/details");
+    const response = await axios.get("/api/details", {
+      headers: {
+        "Cache-Control": "no-cache",
+        cache: "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
     return response.data;
   };
 
@@ -56,10 +65,10 @@ export const useEditDetails = () => {
     CarFormField[],
     AxiosError<{ message: string }>
   >({
-    queryKey: ["get-details", car?._id],
+    queryKey: ["get-details", car?._id, pathname],
     queryFn: getDetails,
-    staleTime: 5 * 10 * 60 * 1000,
-    cacheTime: 5 * 10 * 60 * 1000,
+    staleTime: 0,
+    cacheTime: 0,
     refetchOnWindowFocus: false,
     refetchInterval: 5 * 10 * 60 * 1000,
     onSuccess(data) {

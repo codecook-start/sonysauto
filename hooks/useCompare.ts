@@ -10,11 +10,18 @@ export const useCompare = () => {
 
   const fetchCars = async () => {
     if (ids.length === 0) return [];
-    const carPromises = ids
-      .slice(-4)
-      .map((id) =>
-        axios.get<CarResponse>(`/api/car/${id}`).then((res) => res.data),
-      );
+    const carPromises = ids.slice(-4).map((id) =>
+      axios
+        .get<CarResponse>(`/api/car/${id}`, {
+          headers: {
+            "Cache-Control": "no-cache",
+            cache: "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+        })
+        .then((res) => res.data),
+    );
     const carsData = await Promise.all(carPromises);
     return carsData;
   };
@@ -23,8 +30,8 @@ export const useCompare = () => {
     ["cars", ids],
     fetchCars,
     {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      cacheTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 0,
+      cacheTime: 0,
       refetchOnWindowFocus: false,
       refetchInterval: 5 * 60 * 1000, // 5 minutes
       onSuccess: (response) => setCars(response),

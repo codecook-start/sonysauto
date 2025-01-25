@@ -13,6 +13,7 @@ import {
   Barcode,
   DoorOpen,
   Tag,
+  MailIcon,
 } from "lucide-react";
 import {
   Facebook,
@@ -50,12 +51,24 @@ export const routes = [
   },
 ];
 
+export const dealer = {
+  name: "Sony's Auto",
+  phone: "+13453245773",
+  email: "sonysauto@hotmail.com",
+};
+
 export const contact = [
   {
     name: "phone",
-    link: "tel:1234567890",
-    number: "123-456-7890",
+    link: "tel:+13453245773",
+    number: "+13453245773",
     icon: Phone,
+  },
+  {
+    name: "email",
+    link: "mailto:sonysauto@hotmail.com",
+    email: "sonysauto@hotmail.com",
+    icon: MailIcon,
   },
   {
     name: "location",

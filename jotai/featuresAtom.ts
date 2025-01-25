@@ -1,8 +1,7 @@
 import { Feature } from "@/types/car";
 import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
 
-export const featuresAtom = atomWithStorage<Feature[]>("features", []);
+export const featuresAtom = atom<Feature[]>([]);
 
 export const featuresEditAtom = atom<Feature[]>([]);
 

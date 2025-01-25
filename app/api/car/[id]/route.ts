@@ -9,13 +9,16 @@ import { Feature } from "@/models/Feature";
 import { SellerNote } from "@/models/SellerNote";
 import { CarDetail } from "@/models/Detail";
 import { Ordering } from "@/models/Ordering";
+import { CarLabel } from "@/models/Label";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 console.log({
   Feature,
   SellerNote,
   CarDetail,
+  CarLabel,
 });
 
 export async function GET(
@@ -65,6 +68,10 @@ export async function GET(
       .populate({
         path: "sellerNotes.texts",
         model: "SellerNoteText",
+      })
+      .populate({
+        path: "label",
+        model: "CarLabel",
       });
 
     if (!car) {
@@ -218,6 +225,9 @@ export async function PUT(
     car.pages = formData.get("pages")
       ? JSON.parse(formData.get("pages") as string)
       : car.pages;
+
+    const label = formData.get("label");
+    car.label = label ? new Types.ObjectId(label.toString()) : null;
 
     await car.save();
 

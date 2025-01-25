@@ -104,6 +104,8 @@ const SortableItem: React.FC<SortableItemProps> = ({ feature }) => {
           <img
             src={"/" + feature.icon}
             alt="feature"
+            loading="lazy"
+            fetchPriority="low"
             className={cn(
               "h-10 w-10 cursor-pointer rounded-full object-contain object-center",
               {

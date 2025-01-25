@@ -73,7 +73,13 @@ const About = () => {
       {/* image, title, paragraph, alternate image from left to right, and vice versa */}
       <section className="container-md my-16 flex flex-col items-center gap-8 lg:flex-row">
         <div className="lg:w-1/2">
-          <img src="/1.jpg" alt="about us" className="w-full" />
+          <img
+            src="/1.jpg"
+            alt="about us"
+            className="w-full"
+            loading="lazy"
+            fetchPriority="low"
+          />
         </div>
         <div className="lg:w-1/2">
           <h2 className="text-2xl font-bold">Our Story</h2>
@@ -95,7 +101,13 @@ const About = () => {
           </p>
         </div>
         <div className="lg:w-1/2">
-          <img src="/2.jpg" alt="about us" className="w-full" />
+          <img
+            src="/2.jpg"
+            alt="about us"
+            className="w-full"
+            loading="lazy"
+            fetchPriority="low"
+          />
         </div>
       </section>
       {/* carousal */}
@@ -125,6 +137,8 @@ const About = () => {
                     alt=""
                     key={index}
                     className="mx-1 aspect-video h-full w-[80%] rounded object-cover"
+                    loading="lazy"
+                    fetchPriority="low"
                   />
                 ))}
               </div>
@@ -141,6 +155,8 @@ const About = () => {
               src="/1.jpg"
               alt="team member"
               className="rounded-xl object-cover"
+              loading="lazy"
+              fetchPriority="low"
             />
             <h4 className="mt-4 text-xl font-bold">John Doe</h4>
             <p className="text-neutral-600">CEO</p>
@@ -150,6 +166,8 @@ const About = () => {
               src="/2.jpg"
               alt="team member"
               className="rounded-xl object-cover"
+              loading="lazy"
+              fetchPriority="low"
             />
             <h4 className="mt-4 text-xl font-bold">Jane Doe</h4>
             <p className="text-neutral-600">CFO</p>
@@ -159,6 +177,8 @@ const About = () => {
               src="/3.jpg"
               alt="team member"
               className="rounded-xl object-cover"
+              loading="lazy"
+              fetchPriority="low"
             />
             <h4 className="mt-4 text-xl font-bold">John Doe</h4>
             <p className="text-neutral-600">CTO</p>

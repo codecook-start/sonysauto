@@ -35,9 +35,11 @@ const CarSummary = () => {
                 <Icon size={"1em"} color="green" />
               ) : (
                 <img
-                  className="h-8 w-8 rounded-md object-contain object-center"
+                  className="size-4 rounded-md object-contain object-center"
                   src={`${window.location.origin}/${icon}`}
                   alt={name}
+                  loading="lazy"
+                  fetchPriority="low"
                 />
               )}
               <span className="text-xs text-neutral-600">

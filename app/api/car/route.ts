@@ -7,11 +7,13 @@ import { Types } from "mongoose";
 import { titleMap } from "@/data";
 import { Ordering } from "@/models/Ordering";
 import { createCarPipeline } from "@/pipeline/filterCars";
+import { CarDetail } from "@/models/Detail";
 
 export const preferredRegion = "home";
 export const maxDuration = 60;
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,18 +42,40 @@ export async function POST(request: NextRequest) {
       }),
     );
 
-    const parsedDetails = JSON.parse(formData.get("details") as string);
-    const details = parsedDetails.map(
-      (detail: { detail: string; option: string }) => ({
-        detail: new Types.ObjectId(detail.detail),
-        option: detail.option ? new Types.ObjectId(detail.option) : null,
-      }),
+    const carDetails: { _id: Types.ObjectId }[] = await CarDetail.find(
+      {},
+      { _id: 1 },
     );
+
+    const parsedDetails = JSON.parse(formData.get("details") as string);
+    const details = carDetails.map((detail) => {
+      const found = parsedDetails.find(
+        (parsedDetail: { detail: string }) =>
+          parsedDetail.detail === detail._id.toString(),
+      );
+      try {
+        return {
+          detail: detail._id,
+          option:
+            found && found.option
+              ? new Types.ObjectId(found.option as string)
+              : null,
+        };
+      } catch (error) {
+        console.error("Error converting ObjectId(option):", error);
+        return {
+          detail: detail._id,
+          option: null,
+        };
+      }
+    });
 
     const parsedFeatures = JSON.parse(formData.get("features") as string);
     const features = parsedFeatures.map(
       (_id: string) => new Types.ObjectId(_id),
     );
+
+    const pages = JSON.parse(formData.get("pages") as string) as string[];
 
     const carDocument = new Car({
       title: formData.get("title")?.toString() || "",
@@ -63,18 +87,41 @@ export async function POST(request: NextRequest) {
         ? JSON.parse(formData.get("videos") as string)
         : [],
       images: uploadedFiles,
-      pages: formData.get("pages")
-        ? JSON.parse(formData.get("pages") as string)
-        : [],
+      pages,
       sellerNotes: JSON.parse(formData.get("sellerNotes") as string).map(
-        (note: { note: string; texts: string[] }) => ({
-          note: new Types.ObjectId(note.note),
-          texts: note.texts.map((text: string) => new Types.ObjectId(text)),
-        }),
+        (note: { note: string; texts: string[] }) => {
+          try {
+            return {
+              note: new Types.ObjectId(note.note),
+              texts: note.texts.map((text: string) => new Types.ObjectId(text)),
+            };
+          } catch (error) {
+            console.error("Error converting ObjectId(seller notes):", error);
+            return {
+              note: null,
+              texts: [],
+            };
+          }
+        },
       ),
+      label: formData.get("label")
+        ? new Types.ObjectId(formData.get("label") as string)
+        : null,
     });
 
     await carDocument.save();
+
+    const bulkOperations = pages.map((page) => ({
+      updateOne: {
+        filter: { name: "Car", page },
+        update: {
+          $push: { ids: { $each: [carDocument._id], $position: 0 } },
+        },
+        upsert: true,
+      },
+    }));
+
+    await Ordering.bulkWrite(bulkOperations);
 
     return NextResponse.json(
       {
@@ -118,7 +165,7 @@ export async function GET(request: NextRequest) {
           pagination: {
             currentPage: page || 1,
             totalPages: 0,
-            limit: limit || 10,
+            limit: limit || 32,
             totalItems: 0,
           },
         },
@@ -153,7 +200,7 @@ export async function GET(request: NextRequest) {
     }
 
     const sortByParam = searchParams.get("sortBy");
-    let sortStage: { [key: string]: 1 | -1 } = { createdAt: -1 };
+    let sortStage: { [key: string]: 1 | -1 } = { carOrder: 1 };
 
     if (sortByParam) {
       sortStage = {};
@@ -178,16 +225,18 @@ export async function GET(request: NextRequest) {
     }
 
     if (Object.keys(sortStage).length === 0) {
-      sortStage = { createdAt: -1 };
+      sortStage = {
+        carOrder: 1,
+      };
     }
 
     const carDetailOrdering = await Ordering.findOne({ name: "CarDetail" });
     const carDetailOrderIds = carDetailOrdering?.ids ?? [];
 
-    const skip = (page - 1) * limit;
+    const carOrdering = await Ordering.findOne({ name: "Car", page: pathname });
+    const carOrderIds = carOrdering?.ids ?? [];
 
-    const minPrice = parseFloat(searchParams.get("minPrice") || "0");
-    const maxPrice = parseFloat(searchParams.get("maxPrice") || "Infinity");
+    const skip = (page - 1) * limit;
 
     const pipeline = createCarPipeline(
       pathname,
@@ -198,8 +247,7 @@ export async function GET(request: NextRequest) {
       skip,
       limit,
       carDetailOrderIds,
-      minPrice,
-      maxPrice,
+      carOrderIds,
     );
 
     const [result] = await Car.aggregate(pipeline);

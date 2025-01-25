@@ -39,3 +39,6 @@ next-env.d.ts
 public/uploads
 
 data/*.json
+
+# backup
+backup/

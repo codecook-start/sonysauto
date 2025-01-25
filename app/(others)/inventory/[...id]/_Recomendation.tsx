@@ -102,6 +102,8 @@ const RecomendationItem = ({ car }: { car: CarResponse }) => {
           src={`/${slide}`}
           alt="japan1"
           className="aspect-video h-full w-full object-cover"
+          loading="lazy"
+          fetchPriority="low"
         />
         <span className="skew-left absolute bottom-0 right-0 transform bg-blue-500 px-3 py-2 text-xs font-semibold text-white">
           Price: {car.price || "N/A"}

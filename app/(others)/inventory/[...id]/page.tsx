@@ -29,6 +29,7 @@ import OfferPrice from "@/components/dialog/OfferPrice";
 import Loader from "@/components/Loader";
 import Link from "next/link";
 import useAuth from "@/hooks/useAuth";
+import { dealer } from "@/data";
 
 const Inventory = ({ params: { id } }: { params: { id: string } }) => {
   const {
@@ -142,6 +143,8 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
                 src={`/${slide}`}
                 alt={`japan${index + 1}`}
                 onClick={() => setLightboxVisible(index)}
+                loading="lazy"
+                fetchPriority="low"
               />
             ))}
           </CarouselContainer>
@@ -164,21 +167,21 @@ const Inventory = ({ params: { id } }: { params: { id: string } }) => {
             <h3 className="text-2xl font-bold">{car?.price || "0.00"}</h3>
           </div>
           {/* chat via whatsapp */}
-          <Button
-            className="w-full gap-2 rounded border-2 py-6 text-xs shadow hover:bg-blue-500 hover:text-white"
-            variant={"outline"}
+          <a
+            href={`https://wa.me/${dealer.phone}`}
+            className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-6 text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
           >
             <MessageCircle size={"1em"} />
             <span>Chat via WhatsApp</span>
-          </Button>
+          </a>
           {/* sms */}
-          <Button
-            className="w-full gap-2 rounded border-2 py-6 text-xs shadow hover:bg-blue-500 hover:text-white"
-            variant={"outline"}
+          <a
+            href={`sms:${dealer.phone}`}
+            className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-6 text-xs font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
           >
             <MessageCircle size={"1em"} />
             <span>Message Us</span>
-          </Button>
+          </a>
           {/* Trade in Form */}
           <Button
             className="w-full gap-2 rounded border-2 py-6 text-xs shadow hover:bg-blue-500 hover:text-white"

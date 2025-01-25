@@ -3,6 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const DATA_DIR = path.join(process.cwd(), "data");
 

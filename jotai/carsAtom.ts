@@ -1,13 +1,12 @@
 import { CarPagination } from "@/types/car";
 import { CarResponse } from "@/types/edit-car";
 import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
 
-export const carsAtom = atomWithStorage<CarResponse[]>("cars", []);
+export const carsAtom = atom<CarResponse[]>([]);
 
 export const CAR_PAGINATION_INITIAL_STATE: CarPagination = {
   page: 1,
-  limit: 24,
+  limit: 32,
   totalPages: 1,
   totalItems: 0,
   details: [],
@@ -18,7 +17,7 @@ export const CAR_PAGINATION_INITIAL_STATE: CarPagination = {
 
 export const carPaginationAtom = atom<CarPagination>({
   page: 1,
-  limit: 24,
+  limit: 32,
   totalPages: 1,
   totalItems: 0,
   details: [],

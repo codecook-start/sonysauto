@@ -3,6 +3,7 @@ import { Car } from "@/models/Car";
 import { connectToDatabase } from "@/lib/mongoose";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function PUT(
   req: NextRequest,

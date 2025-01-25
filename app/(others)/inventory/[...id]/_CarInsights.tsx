@@ -37,6 +37,8 @@ const CarInsights = () => {
                   className="h-8 w-8 rounded-full object-cover object-center"
                   src={`${window.location.origin}/${icon}`}
                   alt={name}
+                  loading="lazy"
+                  fetchPriority="low"
                 />
               )}
               <div className="flex flex-col text-center">

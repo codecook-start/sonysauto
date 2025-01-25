@@ -1,7 +1,7 @@
 import { connectToDatabase, disconnectFromDatabase } from "@/lib/mongoose";
 import { Car } from "@/models/Car";
 
-const updateIconPath = async () => {
+const updateCarPriceCurrency = async () => {
   try {
     await connectToDatabase();
     const cars = await Car.find();
@@ -11,12 +11,12 @@ const updateIconPath = async () => {
         await car.save();
       }
     }
-    console.log("Icon paths updated successfully");
+    console.log("Car prices updated successfully");
   } catch (error) {
-    console.error("Error updating icon paths:", error);
+    console.error("Error updating car prices", error);
   } finally {
     await disconnectFromDatabase();
   }
 };
 
-updateIconPath();
+updateCarPriceCurrency();

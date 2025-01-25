@@ -3,16 +3,18 @@ import { SellerNoteText } from "@/models/SellerText";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
-    const { noteId, title, text, scope } = await req.json();
+    const { noteId, title, text, scope, used } = await req.json();
     const sellerText = await SellerNoteText.create({
       noteId,
       title,
       text,
       scope,
+      used: used ?? false,
     });
     return NextResponse.json(sellerText, { status: 200 });
   } catch (error) {
@@ -27,11 +29,22 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     await connectToDatabase();
-    const { _id, title, text, scope } = await req.json();
+    const { _id, title, text, scope, used } = await req.json();
+    console.log({
+      title,
+      used,
+    });
     const sellerText = await SellerNoteText.findByIdAndUpdate(
       _id,
-      { title, text, scope },
-      { new: true },
+      {
+        title,
+        text,
+        scope,
+        used,
+      },
+      {
+        new: true,
+      },
     );
     return NextResponse.json(sellerText, { status: 200 });
   } catch (error) {

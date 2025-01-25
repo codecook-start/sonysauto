@@ -1,3 +1,5 @@
+import { CarLabel, SellerNote } from "./car";
+
 export type CarResponse = {
   _id: string;
   title: string;
@@ -10,6 +12,7 @@ export type CarResponse = {
   images: Image[];
   domain: string[];
   pages: string[];
+  label?: CarLabel;
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -26,7 +29,7 @@ export interface Detail {
   _id: string;
   name: string;
   icon: string | null;
-  __v: number;
+  __v?: number;
 }
 
 export interface Option {
@@ -34,7 +37,7 @@ export interface Option {
   detailId: string;
   name: string;
   icon: string | null;
-  __v: number;
+  __v?: number;
 }
 
 export interface Details {
