@@ -193,9 +193,16 @@ export async function PUT(
 
     const parsedDetails = JSON.parse(formData.get("details") as string);
     const details = parsedDetails.map(
-      (detail: { detail: string; option: string }) => ({
+      (detail: {
+        detail: string;
+        option: string;
+        showInDetailsPage: boolean;
+        showInListPage: boolean;
+      }) => ({
         detail: new Types.ObjectId(detail.detail),
         option: detail.option ? new Types.ObjectId(detail.option) : null,
+        showInDetailsPage: detail.showInDetailsPage,
+        showInListPage: detail.showInListPage,
       }),
     );
 

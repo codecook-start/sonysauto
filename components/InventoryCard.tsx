@@ -29,9 +29,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useCompare } from "@/hooks/useCompare";
 import { useCar } from "@/hooks/useCar";
 import Link from "next/link";
-import { CarResponse, Details } from "@/types/edit-car";
+import { CarResponse } from "@/types/edit-car";
 import { MultiSelectWithCustom } from "@/components/ui/multi-select-with-custom";
-import { capitalize, inventoryCardDetailsOrder } from "@/lib/utils";
+import { capitalize } from "@/lib/utils";
 import Image from "next/image";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -312,11 +312,9 @@ const InventoryCard = ({
 
             <div className="content flex flex-1 flex-col justify-between p-2">
               <ul className="grid grid-cols-3 gap-2 text-xs text-neutral-500">
-                {inventoryCardDetailsOrder(
-                  (car.details || []).filter((item) => !!item.option),
-                )
-                  .slice(0, 6)
-                  ?.map((item: Details, index: number) => (
+                {(car.details || [])
+                  .filter((item: any) => item?.showInListPage && item.option)
+                  .map((item: any, index: number) => (
                     <li
                       key={index}
                       className="flex flex-col items-center gap-1 rounded border px-2 py-1"
@@ -338,6 +336,34 @@ const InventoryCard = ({
                       </span>
                     </li>
                   ))}
+                {!car.details?.filter((item: any) => item?.showInListPage)
+                  .length &&
+                  (car.details || [])
+                    .filter((item) => !!item.option) // Filter out items that have no `option`
+                    .slice(0, 6) // Take the first 6 items
+                    .map((item: any, index: number) => (
+                      <li
+                        key={index}
+                        className="flex flex-col items-center gap-1 rounded border px-2 py-1"
+                      >
+                        {item.option?.icon ? (
+                          <Image
+                            src={"/" + item.option.icon}
+                            alt={item.option?.name || "N/A"}
+                            className="h-6 w-6 object-contain grayscale"
+                            width={24}
+                            height={24}
+                          />
+                        ) : (
+                          React.createElement(itemIcons[index], {
+                            size: "1.5em",
+                          })
+                        )}
+                        <span className="line-clamp-1 text-center">
+                          {capitalize(item.option?.name) || "N/A"}
+                        </span>
+                      </li>
+                    ))}
               </ul>
             </div>
           </div>

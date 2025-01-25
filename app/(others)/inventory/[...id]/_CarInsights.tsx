@@ -8,8 +8,8 @@ import React from "react";
 
 const CarInsights = () => {
   const car = useAtomValue(carAtom);
-  const insights = ((car?.details || []) as any[])
-    .filter(({ detail }) => !!detail)
+  const filteredInsights = ((car?.details || []) as any[])
+    .filter((detail) => detail.showInDetailsPage && detail.option)
     .slice(0, 6)
     .map((detail: any) => ({
       name: detail.detail.name,
@@ -18,6 +18,20 @@ const CarInsights = () => {
         (detail.detail as any).icon ||
         carDetailMap[detail.detail.name as keyof typeof carDetailMap],
     }));
+
+  const insights =
+    filteredInsights.length > 0
+      ? filteredInsights
+      : ((car?.details || []) as any[])
+          .filter(({ option }) => !!option) // Filter out items without options
+          .slice(0, 6)
+          .map((detail: any) => ({
+            name: detail.detail.name,
+            values: [detail.option?.name],
+            icon:
+              (detail.detail as any).icon ||
+              carDetailMap[detail.detail.name as keyof typeof carDetailMap],
+          }));
   return (
     <div className="bg-black">
       <ul className="container-md-mx grid grid-cols-3 gap-4 py-8 md:grid-cols-6">

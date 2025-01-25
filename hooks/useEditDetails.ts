@@ -86,6 +86,8 @@ export const useEditDetails = () => {
               : existingDetail?.option
                 ? [existingDetail.option]
                 : [],
+            showInDetailsPage: existingDetail?.showInDetailsPage || false,
+            showInListPage: existingDetail?.showInListPage || false,
           };
         }),
       );

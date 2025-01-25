@@ -27,6 +27,8 @@ import { useEditDetails } from "@/hooks/useEditDetails";
 
 const SortableItem: React.FC<{ field: CarFormField }> = ({ field }) => {
   const [editMode, setEditMode] = useState(false);
+  const [listChecked, setListChecked] = useState(field.showInListPage);
+  const [detailsChecked, setDetailsChecked] = useState(field.showInDetailsPage);
   const setCarFormFields = useSetAtom(CarFormFieldsEditAtom);
   const {
     updateDetail: { mutate: updateField, isLoading: isUpdatingField },
@@ -168,6 +170,31 @@ const SortableItem: React.FC<{ field: CarFormField }> = ({ field }) => {
     });
   };
 
+  const handleCheckboxChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    checkboxType: "list" | "detail",
+  ) => {
+    const isChecked = e.target.checked;
+    console.log({ isChecked, id: field._id });
+    setCarFormFields((prevFields) =>
+      prevFields.map((f) =>
+        f._id === field._id
+          ? {
+              ...f,
+              [checkboxType === "list"
+                ? "showInListPage"
+                : "showInDetailsPage"]: isChecked,
+            }
+          : f,
+      ),
+    );
+    if (checkboxType === "list") {
+      setListChecked(isChecked);
+    } else {
+      setDetailsChecked(isChecked);
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -264,6 +291,24 @@ const SortableItem: React.FC<{ field: CarFormField }> = ({ field }) => {
               })}
               onClick={handleDelete}
             />
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={listChecked}
+              onChange={(e) => handleCheckboxChange(e, "list")}
+            />
+            <Label className="text-xs">List</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={detailsChecked}
+              onChange={(e) => handleCheckboxChange(e, "detail")}
+            />
+            <Label className="text-xs">Details</Label>
           </div>
         </div>
         {isDropdown(field) ? (

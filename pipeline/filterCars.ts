@@ -110,6 +110,8 @@ export const createCarPipeline = (
               order: {
                 $indexOfArray: [carDetailOrderIds, "$$detailEntry.detail"],
               },
+              showInDetailsPage: "$$detailEntry.showInDetailsPage",
+              showInListPage: "$$detailEntry.showInListPage",
             },
           },
         },

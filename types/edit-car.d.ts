@@ -43,6 +43,8 @@ export interface Option {
 export interface Details {
   detail: Detail;
   option: Option;
+  showInDetailsPage?: boolean;
+  showInListPage?: boolean;
   _id: string;
 }
 
