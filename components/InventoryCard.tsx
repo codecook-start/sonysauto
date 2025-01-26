@@ -142,20 +142,32 @@ const InventoryCard = ({
   const slides = car.images || [];
   const [currentImage, setCurrentImage] = useState(0);
   const { isAuthenticated, isLoginLoading } = useAuth();
+  const [scrollInterval, setScrollInterval] = useState<NodeJS.Timeout | null>(
+    null,
+  );
   const { ids, setIds } = useCompare();
   const { mutate } = useCarPages(car._id);
 
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: car._id });
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const { left, width } = e.currentTarget.getBoundingClientRect();
-    const mouseX = e.clientX - left;
-    const index = Math.floor((mouseX / width) * Math.min(5, slides.length));
-    setCurrentImage(index);
+  const handleMouseEnter = () => {
+    if (scrollInterval) return; // Prevent multiple intervals
+
+    const interval = setInterval(() => {
+      setCurrentImage(
+        (prevIndex) => (prevIndex + 1) % Math.min(5, slides.length),
+      );
+    }, 1000); // Change images every second
+
+    setScrollInterval(interval);
   };
 
   const handleMouseLeave = () => {
+    if (scrollInterval) {
+      clearInterval(scrollInterval);
+      setScrollInterval(null); // Reset interval state
+    }
     setCurrentImage(0);
   };
 
@@ -256,7 +268,7 @@ const InventoryCard = ({
       )}
       <div className="inventory-card group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl bg-white">
         <Link href={`/inventory/${car._id}`}>
-          <div onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+          <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             {/* Image Section */}
             <div className="image relative aspect-[4/3] w-full overflow-hidden">
               <img
