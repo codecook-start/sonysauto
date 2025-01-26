@@ -4,6 +4,7 @@ services:
     volumes:
       - uploads:/app/public/uploads
     environment:
+      - MONGODB_URI=mongodb://root:Be9KfQnULhttaXi@mongo:27017/sonysauto?authSource=admin
       - NODE_ENV=production
     ports:
       - "8000:3000"

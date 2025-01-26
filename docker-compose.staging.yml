@@ -1,0 +1,15 @@
+services:
+  app:
+    container_name: sonysauto_staging
+    build: .
+    volumes:
+      - uploads:/app/public/uploads
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+
+volumes:
+  uploads:
