@@ -78,59 +78,56 @@ const MakeFilter = () => {
   };
 
   return (
-    <div className="relative mx-auto w-min max-w-full">
-      <ScrollArea>
-        <div className="flex h-full gap-4 px-4 py-2">
-          {makes?.slice(0, 8).map((make, index) => (
-            <button
-              key={make.name}
-              onClick={() => toggleMakeFilter(make.name)}
-              className="group relative flex-shrink-0"
-              aria-pressed={isMakeSelected(make.name)}
-              data-aos="fade-up" // Apply AOS fade-up animation
-              data-aos-delay={index * 150} // Staggered delay based on index
+    <div className="relative mx-auto w-full">
+      <div className="grid grid-cols-1 gap-4 overflow-x-auto px-4 py-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+        {makes?.slice(0, 8).map((make, index) => (
+          <button
+            key={make.name}
+            onClick={() => toggleMakeFilter(make.name)}
+            className="group relative flex-shrink-0"
+            aria-pressed={isMakeSelected(make.name)}
+            data-aos="fade-up" // Apply AOS fade-up animation
+            data-aos-delay={index * 150} // Staggered delay based on index
+          >
+            {isMakeSelected(make.name) && (
+              <div
+                className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#008559] via-[#0073e5] to-[#6842ff] opacity-75 blur-sm"
+                aria-hidden="true"
+              />
+            )}
+
+            {/* Content container */}
+            <div
+              className={`relative flex h-full flex-col items-center justify-center gap-3 rounded-lg px-4 py-2 ${isMakeSelected(make.name) ? "bg-white/95" : "bg-white"} min-w-[120px] shadow-sm transition-colors duration-200 hover:bg-white/90 hover:shadow-md`}
             >
-              {isMakeSelected(make.name) && (
-                <div
-                  className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#008559] via-[#0073e5] to-[#6842ff] opacity-75 blur-sm"
-                  aria-hidden="true"
-                />
+              {/* Icon container */}
+              {make.icon && (
+                <div className="h-8 w-8 flex-shrink-0">
+                  <img
+                    src={`/${make.icon}`}
+                    alt={`${make.name} logo`}
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                    fetchPriority="low"
+                  />
+                </div>
               )}
 
-              {/* Content container */}
-              <div
-                className={`relative flex h-full flex-col items-center justify-center gap-3 rounded-lg px-4 py-2 ${isMakeSelected(make.name) ? "bg-white/95" : "bg-white"} min-w-[120px] shadow-sm transition-colors duration-200 hover:bg-white/90 hover:shadow-md`}
-              >
-                {/* Icon container */}
-                {make.icon && (
-                  <div className="h-8 w-8 flex-shrink-0">
-                    <img
-                      src={`/${make.icon}`}
-                      alt={`${make.name} logo`}
-                      className="h-full w-full object-contain"
-                      loading="lazy"
-                      fetchPriority="low"
-                    />
-                  </div>
-                )}
-
-                {/* Text content */}
-                <span className="flex items-center gap-2 whitespace-nowrap font-medium">
-                  <Checkbox
-                    key={`${make.name}-${Date.now()}`}
-                    checked={isMakeSelected(make.name)}
-                  />
-                  <span>{make.name}</span>
-                  <span className="ml-1 text-gray-500">
-                    ({make.count || "0"})
-                  </span>
+              {/* Text content */}
+              <span className="flex items-center gap-2 whitespace-nowrap font-medium">
+                <Checkbox
+                  key={`${make.name}-${Date.now()}`}
+                  checked={isMakeSelected(make.name)}
+                />
+                <span>{make.name}</span>
+                <span className="ml-1 text-gray-500">
+                  ({make.count || "0"})
                 </span>
-              </div>
-            </button>
-          ))}
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
