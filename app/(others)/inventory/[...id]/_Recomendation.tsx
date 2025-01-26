@@ -105,7 +105,8 @@ const RecomendationItem = ({ car }: { car: CarResponse }) => {
           loading="lazy"
           fetchPriority="low"
         />
-        <span className="skew-left absolute bottom-0 right-0 transform bg-blue-500 px-3 py-2 text-xs font-semibold text-white">
+
+        <span className="absolute bottom-0 right-0 transform bg-[#1D4ED8] px-3 py-2 text-xs font-semibold text-white">
           Price: {car.price || "N/A"}
         </span>
       </div>
