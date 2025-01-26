@@ -314,10 +314,12 @@ const InventoryCard = ({
             </div>
 
             <div className="header relative w-full space-x-2 border-b px-2 py-4">
-              <h3 className="text-pretty pb-4 text-sm font-bold">
-                {car.title || "Car Title"}
-              </h3>
-              <p className="skew-left absolute bottom-0 right-0 transform bg-blue-500 px-3 py-2 text-xs font-semibold text-white">
+              <div style={{ minHeight: "60px" }}>
+                <h3 className="text-pretty pb-4 text-sm font-bold">
+                  {car.title || "Car Title"}
+                </h3>
+              </div>
+              <p className="absolute bottom-0 right-0 transform bg-[#1D4ED8] px-3 py-2 text-xs font-semibold text-white">
                 {car.price || "N/A"}
               </p>
             </div>
