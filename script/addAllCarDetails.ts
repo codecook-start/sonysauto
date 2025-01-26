@@ -16,7 +16,9 @@ const addAllCarDetails = async () => {
           console.log("Detail id:", detail._id.toString());
           car.details.push({
             detail: new Types.ObjectId(detail._id),
-            option: null,
+            option: null, // Assuming this is the default value
+            showInDetailsPage: false, // Set default value
+            showInListPage: false, // Set default value
           });
         }
       }
