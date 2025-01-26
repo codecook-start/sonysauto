@@ -17,7 +17,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, PencilIcon, Plus, Save, Trash2 } from "lucide-react";
 import { CarFormField } from "@/types/car";
-import { capitalize, cn, isDropdown, isImageDropdown } from "@/lib/utils";
+import { capitalize, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Loader } from "react-feather";
 import { MultiSelectWithCustomImageOptionControl } from "@/components/ui/multi-select-with-custom-image-option-control";
