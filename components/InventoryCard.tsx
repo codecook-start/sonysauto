@@ -191,7 +191,7 @@ const InventoryCard = ({
 
   return (
     <div ref={setNodeRef} style={style} className="group relative h-full">
-      <div className="absolute -inset-0 rounded-xl bg-gradient-to-r from-[#008559] via-[#0073e5] to-[#6842ff] opacity-25 blur-sm transition-opacity duration-500 group-hover:opacity-90 group-hover:blur-md"></div>
+      <div className="absolute -inset-0 rounded-xl bg-gradient-to-r from-[#008559] via-[#0000FF] via-[#0073e5] via-[#FF0000] to-[#6842ff] opacity-25 blur-sm transition-opacity duration-500 group-hover:opacity-90 group-hover:blur-md"></div>
       {/* edit and delete */}
       {isAuthenticated && (
         <div className="absolute right-2 top-2 z-10 flex gap-2">
