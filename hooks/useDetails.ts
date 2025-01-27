@@ -30,6 +30,7 @@ export const useDetails = () => {
     const formData = new FormData();
     formData.append("name", detail.name || "");
     formData.append("type", detail.type || "");
+    formData.append("isRequired", detail.isRequired ? "true" : "false");
 
     const response = await axios.post("/api/details", formData, {
       headers: {

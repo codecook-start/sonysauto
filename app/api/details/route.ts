@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
     const file = formData.get("image") as File | null;
     const name = formData.get("name") as string | null;
     const type = formData.get("type") as string | null;
+    const isRequired = formData.get("isRequired") as string | null;
 
     if (!name) {
       return NextResponse.json(
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest) {
       name,
       type,
       icon: iconPath,
+      isRequired,
     });
 
     await detail.save();
@@ -196,6 +198,7 @@ export async function GET() {
           name: 1,
           icon: 1,
           type: 1,
+          isRequired: 1,
           values: {
             $map: {
               input: "$values",
@@ -205,6 +208,7 @@ export async function GET() {
                 name: "$$option.name",
                 icon: "$$option.icon",
                 type: "$$option.type",
+                isRequired: "$$option.isRequired",
               },
             },
           },
