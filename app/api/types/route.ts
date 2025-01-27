@@ -199,7 +199,9 @@ export async function GET(request: NextRequest) {
       const typeDetail = car.details.find(
         ({ detail }: any) => detail.name.toLowerCase() === "type",
       );
-      if (String(typeDetail.detail._id) !== String(typeDetail.option.detailId))
+      if (
+        String(typeDetail.detail._id) !== String(typeDetail?.option?.detailId)
+      )
         return acc;
       if (typeDetail && typeDetail.option) {
         const { option } = typeDetail;

@@ -49,6 +49,10 @@ export const routes = [
     name: "About Us",
     route: "/about",
   },
+  {
+    name: "Bin",
+    route: "/deletedcar",
+  },
 ];
 
 export const dealer = {

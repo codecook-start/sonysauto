@@ -245,6 +245,14 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit;
 
+    // Handle isDeleted filtering
+    const isDeletedParam = searchParams.get("isdeleted");
+    let isDeleted: boolean | undefined = undefined; // Default: Exclude deleted cars
+
+    if (isDeletedParam !== null) {
+      isDeleted = isDeletedParam === "true"; // Show only deleted cars if `true`
+    }
+
     const pipeline = createCarPipeline(
       pathname,
       search,
@@ -255,6 +263,7 @@ export async function GET(request: NextRequest) {
       limit,
       carDetailOrderIds,
       carOrderIds,
+      isDeleted, // Pass the boolean value directly
     );
 
     const [result] = await Car.aggregate(pipeline);

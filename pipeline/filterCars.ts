@@ -10,10 +10,12 @@ export const createCarPipeline = (
   limit: number = 32,
   carDetailOrderIds: Types.ObjectId[],
   carOrderIds: Types.ObjectId[],
+  isDeletedFilter: boolean = false, // <-- Add this parameters
 ): PipelineStage[] => {
   return [
     {
       $match: {
+        isDeleted: isDeletedFilter ? { $ne: true } : { $exists: true },
         ...(() => {
           switch (pathname) {
             case "inventory":

@@ -132,20 +132,23 @@ export async function DELETE(
       );
     }
 
-    const car = await Car.findByIdAndDelete(id);
+    const car = await Car.findById(id);
 
     if (!car) {
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
     }
 
+    car.isDeleted = true;
+    await car.save();
+
     return NextResponse.json(
-      { message: "Car deleted successfully" },
+      { message: "Car marked as deleted successfully" },
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error deleting car data:", error);
+    console.error("Error marking car as deleted:", error);
     return NextResponse.json(
-      { error: "Failed to delete car data" },
+      { error: "Failed to mark car as deleted" },
       { status: 500 },
     );
   }
