@@ -10,12 +10,6 @@ services:
       - 3000
     env_file:
       - .env
-    networks:
-      - dokploy-network
 
 volumes:
   uploads:
-
-networks:
-  dokploy-network:
-    external: true
