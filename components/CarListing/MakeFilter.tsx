@@ -4,7 +4,6 @@ import { useFilter } from "@/hooks/useFilter";
 import { carPaginationAtom } from "@/jotai/carsAtom";
 import { useAtom } from "jotai";
 import React, { useEffect } from "react";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { delay } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
 import Loader from "@/components/Loader";
