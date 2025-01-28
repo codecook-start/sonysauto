@@ -247,11 +247,14 @@ export async function GET(request: NextRequest) {
 
     // Handle isDeleted filtering
     const isDeletedParam = searchParams.get("isdeleted");
-    let isDeleted: boolean | undefined = undefined; // Default: Exclude deleted cars
+    let isDeleted: boolean = false; // Default: Exclude deleted cars
 
-    if (isDeletedParam !== null) {
-      isDeleted = isDeletedParam === "true"; // Show only deleted cars if `true`
+    
+    if (isDeletedParam) {
+      isDeleted = true; // Show only deleted cars if `true`
     }
+    
+    console.log({ isDeletedParam, isDeleted });
 
     const pipeline = createCarPipeline(
       pathname,
