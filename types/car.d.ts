@@ -168,7 +168,6 @@ export type CarFormField = {
   icon: string | null;
   type: string;
   value?: string;
-  isRequired: boolean;
   values: CarDetailOption[];
   selectedValues?: CarDetailOption[];
   showInListPage: boolean;

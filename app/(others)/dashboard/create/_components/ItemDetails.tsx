@@ -363,7 +363,6 @@ const SortableItem: React.FC<{ field: CarFormField }> = ({ field }) => {
             type="text"
             placeholder={`Enter ${capitalize(field.name)}`}
             className="text-xs"
-            required={field.isRequired}
             value={field.value}
             onChange={handleInputValueChange}
           />
@@ -382,7 +381,6 @@ const ItemDetails: React.FC = () => {
   } = useDetails();
 
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isRequired, setIsRequired] = useState(false);
   const [fieldType, setFieldType] = useState<
     "text" | "dropdown" | "image-dropdown"
   >("dropdown");
@@ -407,7 +405,6 @@ const ItemDetails: React.FC = () => {
       name: `new field ${carFormFields.length + 1}`,
       icon: "",
       type: fieldType,
-      isRequired: isRequired,
     });
     setModalOpen(false);
   };
@@ -500,22 +497,6 @@ const ItemDetails: React.FC = () => {
               >
                 Dropdown
               </Button>
-            </div>
-            {/* Required Field Toggle */}
-            <div className="mb-4 flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="isRequired"
-                checked={isRequired}
-                onChange={() => setIsRequired(!isRequired)}
-                className="cursor-pointer"
-              />
-              <label
-                htmlFor="isRequired"
-                className="cursor-pointer text-gray-700"
-              >
-                Required Field
-              </label>
             </div>
 
             <div className="mt-4 flex justify-end gap-2">

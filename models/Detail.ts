@@ -16,7 +16,6 @@ export type CarDetailDocument = Document & {
   name: string;
   icon?: string | null;
   type: FieldType;
-  isRequired: boolean;
 };
 
 const carDetailSchema = new Schema<CarDetailDocument>({
@@ -26,10 +25,6 @@ const carDetailSchema = new Schema<CarDetailDocument>({
     type: String,
     required: true,
     enum: ["text", "dropdown", "image-dropdown"],
-  },
-  isRequired: {
-    type: Boolean,
-    default: false,
   },
 });
 
