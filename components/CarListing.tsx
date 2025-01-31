@@ -158,11 +158,11 @@ const CarListing = () => {
 
   useEffect(() => {
     AOS.init({
-      duration: 600, // Faster animation duration (0.6 seconds)
-      delay: 50, // A slight delay to make the animations smoother
-      once: true, // Trigger animation only once
-      easing: "ease-out", // Easing function for smoother animation
-      offset: 200, // Trigger when the element is 200px away from the viewport
+      duration: 400, // Faster animation (400ms)
+      delay: 0, // No global delay
+      once: true, // Animate only once
+      easing: "ease-out", // Smooth transition
+      offset: 20, // Trigger animation earlier when just 20px in view
     });
   }, []);
 
@@ -263,7 +263,7 @@ const CarListing = () => {
                       <div
                         key={car._id}
                         data-aos="fade-up" // Use the fade-up animation
-                        data-aos-delay={index * 100} // Stagger animations with delay based on index
+                        data-aos-delay={(index % 4) * 100} // Stagger animations with delay based on index
                         className="inventory-card"
                       >
                         <InventoryCard
@@ -286,7 +286,7 @@ const CarListing = () => {
                               key={id}
                               className="inventory-card relative w-48 opacity-80 shadow-lg"
                               data-aos="fade-up" // Use the fade-up animation
-                              data-aos-delay={index * 100} // Stagger animations with delay based on index
+                              data-aos-delay={(index % 4) * 100} // Stagger animations with delay based on index
                             >
                               <InventoryCard
                                 car={car}

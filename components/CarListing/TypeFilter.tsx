@@ -14,11 +14,12 @@ const TypeFilter = () => {
   const { refetch } = useCars();
 
   useEffect(() => {
-    // Initialize AOS
     AOS.init({
-      duration: 1000, // Animation duration
-      easing: "ease-in-out", // Easing for the animations
-      once: true, // Run animation only once
+      duration: 400, // Faster animation (400ms)
+      delay: 0, // No global delay
+      once: true, // Animate only once
+      easing: "ease-out", // Smooth transition
+      offset: 20, // Trigger animation earlier when just 20px in view
     });
   }, []);
   const {
@@ -77,12 +78,13 @@ const TypeFilter = () => {
     <div className="flex flex-col gap-4">
       <h3 className="text-center text-lg font-semibold">Body Type</h3>
       <div className="flex h-full flex-wrap gap-4 rounded bg-orange-400/50 p-4">
-        {types.map((type) => (
+        {types.map((type, index) => (
           <button
             key={type.name}
             onClick={() => handleTypeClick(type.name)}
             className="group relative flex-1 flex-shrink-0"
             data-aos="fade-up" // Add AOS animation
+            data-aos-delay={(index % 6) * 100}
           >
             {isTypeSelected(type.name) && (
               <div className="absolute inset-0 h-full rounded-lg bg-gradient-to-r from-[#008559] via-[#0073e5] to-[#6842ff] opacity-75 blur-sm" />

@@ -11,6 +11,7 @@ import useCarOrdering from "./useCarOrdering";
 
 export const useCars = () => {
   const [cars, setCars] = useAtom(carsAtom);
+  console.log("@aa", cars);
   const [pagination, setPagination] = useAtom(carPaginationAtom);
   const router = useRouter();
   const pathname = usePathname();
@@ -76,7 +77,11 @@ export const useCars = () => {
     staleTime: 0,
     optimisticResults: true,
     onSuccess: async (response) => {
-      setCars(response.data);
+      console.log({ response, cars });
+      console.log("@aa", "cars updated");
+      if (!cars.find((car) => response.data[0]._id === car._id))
+        setCars([...cars, ...response.data]);
+
       setPagination((prev) => ({
         ...prev,
         totalPages: response.pagination.totalPages,

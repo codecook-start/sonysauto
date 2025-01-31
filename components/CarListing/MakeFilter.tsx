@@ -86,7 +86,7 @@ const MakeFilter = () => {
             className="group relative flex-shrink-0"
             aria-pressed={isMakeSelected(make.name)}
             data-aos="fade-up" // Apply AOS fade-up animation
-            data-aos-delay={index * 150} // Staggered delay based on index
+            data-aos-delay={(index % 6) * 100}
           >
             {isMakeSelected(make.name) && (
               <div
