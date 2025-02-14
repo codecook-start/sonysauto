@@ -264,6 +264,7 @@ const CarListing = () => {
                         key={car._id}
                         data-aos="fade-up" // Use the fade-up animation
                         data-aos-delay={(index % 4) * 100} // Stagger animations with delay based on index
+                        data-aos-duration="1500"
                         className="inventory-card"
                       >
                         <InventoryCard
