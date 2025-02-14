@@ -162,7 +162,7 @@ const CarListing = () => {
       delay: 0, // No global delay
       once: true, // Animate only once
       easing: "ease-out", // Smooth transition
-      offset: 20, // Trigger animation earlier when just 20px in view
+      offset: -20, // Trigger animation earlier when just 20px in view
     });
   }, []);
 
