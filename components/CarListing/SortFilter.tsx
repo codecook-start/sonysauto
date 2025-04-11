@@ -1,6 +1,6 @@
 "use client";
 
-import { SortSelect } from "./SortSelect";
+import SortSelect from "./SortSelect";
 import { Button } from "@/components/ui/button";
 import { Filter } from "lucide-react";
 import {
