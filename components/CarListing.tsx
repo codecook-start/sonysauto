@@ -7,14 +7,24 @@ import InventoryCard from "@/components/InventoryCard";
 import { useCars } from "@/hooks/useCars";
 import CarPagination from "@/components/CarPagination";
 import { delay, getPageTitle, throttle } from "@/lib/utils";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai"; // Updated import
 import { carPaginationAtom } from "@/jotai/carsAtom";
 import Loader from "@/components/Loader";
-import MakeFilter from "@/components/CarListing/MakeFilter";
-import TypeFilter from "@/components/CarListing/TypeFilter";
-import InventoryFilter from "@/components/CarListing/InventoryFilter";
+//import MakeFilter from "@/components/CarListing/MakeFilter";
+import { MakeFilterIcon } from "@/components/CarListing/MakeFilterIcon";
+//import TypeFilter from "@/components/CarListing/TypeFilter";
+import { TypeFilterIcon } from "@/components/CarListing/TypeFilterIcon";
 import ResultFilter from "@/components/CarListing/ResultFilter";
-import ModelFilter from "@/components/CarListing/ModelFilter";
+//import ModelFilter from "@/components/CarListing/ModelFilter";
+import { ModelFilterIcon } from "@/components/CarListing/ModelFilterIcon";
+import { PriceSort } from "@/components/CarListing/PriceSort";
+import { YearSort } from "@/components/CarListing/YearSort";
+import { MileageSort } from "@/components/CarListing/MileageSort";
+import { SizeSort } from "@/components/CarListing/SizeSort";
+import { WeightSort } from "@/components/CarListing/WeightSort";
+import { FeaturesFilter } from "@/components/CarListing/FeaturesFilter";
+import { PerPageFilter } from "@/components/CarListing/PerPageFilter";
+import { ResetFilters } from "@/components/CarListing/ResetFilters";
 import { useFilter } from "@/hooks/useFilter";
 import {
   closestCenter,
@@ -28,8 +38,8 @@ import { rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
 import useAuth from "@/hooks/useAuth";
 import { Button } from "./ui/button";
 import { Save } from "lucide-react";
-import AOS from "aos";
-import "aos/dist/aos.css";
+//import AOS from "aos";
+//import "aos/dist/aos.css";
 
 const CarListing = () => {
   const {
@@ -39,6 +49,7 @@ const CarListing = () => {
     isError,
     isRefetching,
     saveOrder: { mutate: saveOrder, isLoading: isPatching },
+    refetch: refetchCars, // Added refetch from useCars
   } = useCars();
   const {
     isLoading: isFilterLoading,
@@ -47,13 +58,18 @@ const CarListing = () => {
     isRefetchingModels,
     isRefetchingTypes,
     isRefetchingFilters,
+    refetch: refetchFilter, // Added refetch from useFilter
+    refetchMakes,
+    refetchTypes,
   } = useFilter();
-  const pagination = useAtomValue(carPaginationAtom);
+  const [pagination, setPagination] = useAtom(carPaginationAtom); // Changed to useAtom
   const { isAuthenticated } = useAuth();
   const [pageTitle, setPageTitle] = useState("");
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
+  
+  const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
     const title = getPageTitle(window.location.pathname);
@@ -61,43 +77,23 @@ const CarListing = () => {
   }, []);
 
   useEffect(() => {
-    const handleScroll = throttle(async () => {
-      if (
-        isLoading ||
-        isRefetching ||
-        isFilterLoading ||
-        isRefetchingFeatures ||
-        isRefetchingMakes ||
-        isRefetchingModels ||
-        isRefetchingTypes ||
-        isRefetchingFilters
-      ) {
-        return;
-      }
-      await delay(300);
-      sessionStorage.setItem(
-        "scrollPosition",
-        JSON.stringify({
-          ...JSON.parse(sessionStorage.getItem("scrollPosition") || "{}"),
-          [window.location.pathname]: window.scrollY,
-        }),
-      );
-    }, 300);
-
-    window.addEventListener("scroll", handleScroll);
+    if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'auto';
+      }
     };
-  }, [
-    isFilterLoading,
-    isLoading,
-    isRefetching,
-    isRefetchingFeatures,
-    isRefetchingFilters,
-    isRefetchingMakes,
-    isRefetchingModels,
-    isRefetchingTypes,
-  ]);
+  }, []);
+  
+  useEffect(() => {
+  if (resetKey > 0) { // Only run after first reset
+    refetchCars();
+    refetchFilter();
+  }
+}, [resetKey, refetchCars, refetchFilter]);
 
   const isFilterActive = pagination.details.some(
     (detail) => detail.values.length > 0,
@@ -116,10 +112,8 @@ const CarListing = () => {
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     if (!active) return;
-
     const id = String(active.id);
     setActiveId(id);
-
     if (!selectedIds.includes(id)) {
       setSelectedIds([id]);
     }
@@ -127,21 +121,12 @@ const CarListing = () => {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
     if (over && active.id !== over.id) {
       setCars((prevCars) => {
         const overIndex = prevCars.findIndex((car) => car._id === over.id);
-
-        const newCars = prevCars.filter(
-          (car) => !selectedIds.includes(car._id),
-        );
-
-        const selectedCars = prevCars.filter((car) =>
-          selectedIds.includes(car._id),
-        );
-
+        const newCars = prevCars.filter((car) => !selectedIds.includes(car._id));
+        const selectedCars = prevCars.filter((car) => selectedIds.includes(car._id));
         newCars.splice(overIndex, 0, ...selectedCars);
-
         return newCars;
       });
     }
@@ -156,31 +141,115 @@ const CarListing = () => {
     });
   };
 
+  const handleSortChange = async (value: string) => {
+    const [name, order] = value.split("-");
+    setPagination((prev) => ({
+      ...prev,
+      sortBy: { name, order },
+    }));
+    await delay(500);
+    await refetchCars();
+  };
+
+  const handleFilterFeatureChange = async (names: string[]) => {
+    setPagination((prev) => ({
+      ...prev,
+      selectedFeatures: names.map((name) => ({ name })),
+    }));
+    await delay(500);
+    await Promise.all([
+      refetchCars(),
+      refetchFilter(),
+      refetchMakes(),
+      refetchTypes(),
+    ]);
+  };
+
+  const handlePerPageChange = async (value: string) => {
+    setPagination((prev) => ({ ...prev, limit: +value }));
+    await delay(10);
+    await refetchCars();
+  };
+
+/*
+  const resetAll = async () => {
+    setPagination((prev) => ({
+      ...prev,
+      details: [],
+      selectedFeatures: [],
+      sortBy: undefined,
+    }));
+    await Promise.all([refetchCars(), refetchFilter()]);
+  };
+*/
+/*
   useEffect(() => {
     AOS.init({
-      duration: 400, // Faster animation (400ms)
-      delay: 0, // No global delay
-      once: true, // Animate only once
-      easing: "ease-out", // Smooth transition
-      offset: -20, // Trigger animation earlier when just 20px in view
+      duration: 400,
+      delay: 0,
+      once: true,
+      easing: "ease-out",
+      offset: 0,
+      debounceDelay: 50,
+      throttleDelay: 99,
+      disable: typeof window !== 'undefined' && window.innerWidth < 768
     });
+    const timer = setTimeout(() => AOS.refresh(), 1000);
+    return () => clearTimeout(timer);
   }, []);
-
+*/
   return (
     <div className="container-md-mx flex-1">
       <h2 className="mx-auto my-4 text-center text-2xl font-bold">
         {pageTitle}
       </h2>
       {cars && cars.length > 0 && (
-        <>
-          <div className="flex flex-col gap-3">
-            <MakeFilter />
-            <ModelFilter />
-            <TypeFilter />
-          </div>
-          <InventoryFilter />
-        </>
-      )}
+		  <div className="flex flex-col gap-3">
+			
+		  </div>
+		)}
+
+      {/* New filter sidebar */}
+{cars && cars.length > 0 && (
+  <div className="fixed right-0 top-1/2 z-20 flex -translate-y-1/2 transform flex-col max-md:bottom-0 max-md:left-0 max-md:top-auto max-md:right-auto max-md:translate-y-0 max-md:flex-row">
+    <div className="flex flex-col divide-y divide-white/20 rounded-l-lg bg-gray-800/80 shadow-lg backdrop-blur-sm max-md:flex-row max-md:divide-x max-md:divide-y-0 max-md:rounded-t-lg max-md:rounded-l-none">
+      <MakeFilterIcon key={`make-${resetKey}`} />
+      <ModelFilterIcon key={`model-${resetKey}`} />
+      <TypeFilterIcon key={`type-${resetKey}`} />
+      <PriceSort key={`price-${resetKey}`} onValueChange={handleSortChange} />
+      <YearSort key={`year-${resetKey}`} onValueChange={handleSortChange} />
+      <MileageSort key={`mileage-${resetKey}`} onValueChange={handleSortChange} />
+      <SizeSort key={`size-${resetKey}`} onValueChange={handleSortChange} />
+      <WeightSort key={`weight-${resetKey}`} onValueChange={handleSortChange} />
+      <FeaturesFilter
+        key={`features-${resetKey}`}
+        features={pagination.features || []}
+        selectedFeatures={pagination.selectedFeatures?.map(f => f.name) || []}
+        onValueChange={handleFilterFeatureChange}
+      />
+      <PerPageFilter
+        key={`perpage-${resetKey}`}
+        limit={pagination.limit}
+        onValueChange={handlePerPageChange}
+      />
+      <ResetFilters 
+        key={`reset-${resetKey}`}
+        disabled={isLoading}
+        onClick={() => {
+          setResetKey(prev => prev + 1);
+          setPagination(prev => ({
+            ...prev,
+            details: [],
+            selectedFeatures: [],
+            sortBy: undefined,
+            minPrice: undefined,
+            maxPrice: undefined
+          }));
+        }}
+      />
+    </div>
+  </div>
+)}
 
       {/* inventory */}
       <div className="mb-8 space-y-8">
@@ -262,9 +331,6 @@ const CarListing = () => {
                     {cars.map((car, index) => (
                       <div
                         key={car._id}
-                        data-aos="fade-up" // Use the fade-up animation
-                        data-aos-delay={(index % 4) * 100} // Stagger animations with delay based on index
-                        data-aos-duration="1500"
                         className="inventory-card"
                       >
                         <InventoryCard
@@ -286,8 +352,6 @@ const CarListing = () => {
                             <div
                               key={id}
                               className="inventory-card relative w-48 opacity-80 shadow-lg"
-                              data-aos="fade-up" // Use the fade-up animation
-                              data-aos-delay={(index % 4) * 100} // Stagger animations with delay based on index
                             >
                               <InventoryCard
                                 car={car}
