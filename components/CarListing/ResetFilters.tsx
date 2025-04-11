@@ -9,7 +9,13 @@ import { useCars } from "@/hooks/useCars";
 import { delay } from "@/lib/utils";
 import { useCallback, useState } from "react";
 
-export const ResetFilters = ({ disabled }: { disabled?: boolean }) => {
+export const ResetFilters = ({ 
+  disabled,
+  onBeforeReset
+}: { 
+  disabled?: boolean;
+  onBeforeReset?: () => void;
+}) => {
   const setPagination = useSetAtom(carPaginationAtom);
   const { refetch: refetchFilter, refetchMakes, refetchModels, refetchTypes } = useFilter();
   const { refetch: refetchCars } = useCars();
@@ -18,6 +24,11 @@ export const ResetFilters = ({ disabled }: { disabled?: boolean }) => {
   const handleReset = useCallback(async () => {
     setIsResetting(true);
     try {
+      // Call the onBeforeReset callback if provided
+      if (onBeforeReset) {
+        onBeforeReset();
+      }
+      
       // Reset to default state while maintaining valid structure
       setPagination(prev => ({
         ...prev,
@@ -44,13 +55,13 @@ export const ResetFilters = ({ disabled }: { disabled?: boolean }) => {
     } finally {
       setIsResetting(false);
     }
-  }, [setPagination, refetchCars, refetchFilter, refetchMakes, refetchModels, refetchTypes]);
+  }, [setPagination, refetchCars, refetchFilter, refetchMakes, refetchModels, refetchTypes, onBeforeReset]);
 
   return (
     <Button
       variant="ghost"
-    size="icon"
-    className="h-9 w-9 text-white hover:bg-gray-700/50 hover:text-white rounded-none"
+      size="icon"
+      className="h-9 w-9 text-white hover:bg-gray-700/50 hover:text-white rounded-none"
       onClick={handleReset}
       disabled={disabled || isResetting}
       title="Reset all filters"

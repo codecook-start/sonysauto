@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 const CarPagination = () => {
-  const { pagination, setPage, cars } = useCars();
+  const { pagination, setPage } = useCars();
   const { page, totalPages, totalItems, limit } = pagination;
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +18,7 @@ const CarPagination = () => {
     const visiblePages = [];
     const maxVisible = 5;
     let start = Math.max(1, page - 2);
-    let end = Math.min(totalPages, start + maxVisible - 1);
+    const end = Math.min(totalPages, start + maxVisible - 1);
 
     if (end - start + 1 < maxVisible) {
       start = Math.max(1, end - maxVisible + 1);

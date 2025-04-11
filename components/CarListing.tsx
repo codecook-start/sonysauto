@@ -6,8 +6,8 @@ import React, { useState, useEffect } from "react";
 import InventoryCard from "@/components/InventoryCard";
 import { useCars } from "@/hooks/useCars";
 import CarPagination from "@/components/CarPagination";
-import { delay, getPageTitle, throttle } from "@/lib/utils";
-import { useAtom, useAtomValue } from "jotai"; // Updated import
+import { delay, getPageTitle } from "@/lib/utils";
+import { useAtom } from "jotai";
 import { carPaginationAtom } from "@/jotai/carsAtom";
 import Loader from "@/components/Loader";
 //import MakeFilter from "@/components/CarListing/MakeFilter";
@@ -235,7 +235,7 @@ const CarListing = () => {
       <ResetFilters 
         key={`reset-${resetKey}`}
         disabled={isLoading}
-        onClick={() => {
+        onBeforeReset={() => {
           setResetKey(prev => prev + 1);
           setPagination(prev => ({
             ...prev,

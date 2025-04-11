@@ -8,7 +8,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Filter } from "lucide-react";
 import {
   Dialog,
   DialogContent,
