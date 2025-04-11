@@ -14,6 +14,7 @@ import { carPaginationAtom } from "@/jotai/carsAtom";
 import { useFilter } from "@/hooks/useFilter";
 import { useCars } from "@/hooks/useCars";
 import Loader from "@/components/Loader";
+import Image from "next/image";
 
 export const TypeFilterIcon = () => {
   const [open, setOpen] = useState(false);
@@ -121,11 +122,12 @@ export const TypeFilterIcon = () => {
                       }`}
                     >
                       {type.icon && (
-                        <div className="mb-2 h-16 w-full">
-                          <img
+                        <div className="mb-2 h-16 w-full relative">
+                          <Image
                             src={`/${type.icon}`}
                             alt={type.name}
-                            className="h-full w-full object-contain object-center"
+                            fill
+                            className="object-contain object-center"
                           />
                         </div>
                       )}

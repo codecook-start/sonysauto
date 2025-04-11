@@ -9,6 +9,7 @@ import { Checkbox } from "../ui/checkbox";
 import Loader from "@/components/Loader";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import Image from "next/image";
 
 const MakeFilter = () => {
   useEffect(() => {
@@ -101,13 +102,13 @@ const MakeFilter = () => {
             >
               {/* Icon container */}
               {make.icon && (
-                <div className="h-8 w-8 flex-shrink-0">
-                  <img
+                <div className="h-8 w-8 flex-shrink-0 relative">
+                  <Image
                     src={`/${make.icon}`}
                     alt={`${make.name} logo`}
-                    className="h-full w-full object-contain"
+                    fill
+                    className="object-contain"
                     loading="lazy"
-                    fetchPriority="low"
                   />
                 </div>
               )}

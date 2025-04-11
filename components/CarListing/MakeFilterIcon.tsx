@@ -15,6 +15,7 @@ import { useFilter } from "@/hooks/useFilter";
 import { useCars } from "@/hooks/useCars";
 import { delay } from "@/lib/utils";
 import Loader from "@/components/Loader";
+import Image from "next/image";
 
 export const MakeFilterIcon = () => {
   const [open, setOpen] = useState(false);
@@ -127,11 +128,12 @@ export const MakeFilterIcon = () => {
                     >
                       {/* Make icon/image */}
                       {make.icon && (
-                        <div className="mb-2 h-16 w-full">
-                          <img
+                        <div className="mb-2 h-16 w-full relative">
+                          <Image
                             src={`/${make.icon}`}
                             alt={make.name}
-                            className="h-full w-full object-contain object-center"
+                            fill
+                            className="object-contain object-center"
                           />
                         </div>
                       )}

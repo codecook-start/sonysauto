@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Loader from "@/components/Loader";
 import AOS from "aos";
 import "aos/dist/aos.css"; //
+import Image from "next/image";
 
 const ModelFilter = () => {
   const [pagination, setPagination] = useAtom(carPaginationAtom);
@@ -100,13 +101,13 @@ const ModelFilter = () => {
             >
               {/* Icon container */}
               {model.icon && (
-                <div className="h-[4.5rem] w-36 flex-shrink-0">
-                  <img
+                <div className="h-[4.5rem] w-36 flex-shrink-0 relative">
+                  <Image
                     src={`/${model.icon}`}
                     alt={`${model.name} icon`}
-                    className="h-full w-full object-contain"
+                    fill
+                    className="object-contain"
                     loading="lazy"
-                    fetchPriority="low"
                   />
                 </div>
               )}

@@ -8,6 +8,7 @@ import React, { useEffect } from "react";
 import Loader from "@/components/Loader";
 import AOS from "aos";
 import "aos/dist/aos.css"; // Import AOS styles
+import Image from "next/image";
 
 const TypeFilter = () => {
   const [pagination, setPagination] = useAtom(carPaginationAtom);
@@ -97,13 +98,13 @@ const TypeFilter = () => {
             >
               {/* Icon container */}
               {type.icon && (
-                <div className="h-[4.5rem] w-36 flex-shrink-0">
-                  <img
+                <div className="h-[4.5rem] w-36 flex-shrink-0 relative">
+                  <Image
                     src={`/${type.icon}`}
                     alt={`${type.name} icon`}
-                    className="h-full w-full object-contain"
+                    fill
+                    className="object-contain"
                     loading="lazy"
-                    fetchPriority="low"
                   />
                 </div>
               )}

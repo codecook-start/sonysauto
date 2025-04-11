@@ -6,7 +6,7 @@ import React, { useState, useEffect } from "react";
 import InventoryCard from "@/components/InventoryCard";
 import { useCars } from "@/hooks/useCars";
 import CarPagination from "@/components/CarPagination";
-import { delay, getPageTitle } from "@/lib/utils";
+import { getPageTitle } from "@/lib/utils";
 import { useAtom } from "jotai";
 import { carPaginationAtom } from "@/jotai/carsAtom";
 import Loader from "@/components/Loader";
@@ -328,7 +328,7 @@ const CarListing = () => {
                     items={cars.map((field) => field._id)}
                     strategy={rectSortingStrategy}
                   >
-                    {cars.map((car, index) => (
+                    {cars.map((car) => (
                       <div
                         key={car._id}
                         className="inventory-card"
@@ -346,7 +346,7 @@ const CarListing = () => {
                   <DragOverlay dropAnimation={dropAnimation}>
                     {activeId ? (
                       <div className="flex gap-2">
-                        {selectedIds.map((id, index) => {
+                        {selectedIds.map((id) => {
                           const car = cars.find((c) => c._id === id);
                           return car ? (
                             <div
