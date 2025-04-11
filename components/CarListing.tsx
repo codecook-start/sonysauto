@@ -41,6 +41,8 @@ import { Save } from "lucide-react";
 //import AOS from "aos";
 //import "aos/dist/aos.css";
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 const CarListing = () => {
   const {
     cars,
